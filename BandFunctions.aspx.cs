@@ -24,6 +24,15 @@ namespace cyberBurnerWS
                     args.Add(new QueryStringArg(Request.Params.Keys[i], Request.Params[i]));
                 }
 
+                if (Request.QueryString["pf"] == "bands")
+                {
+                    args.Add(new QueryStringArg("func", "SearchForBands"));
+                }
+                else if (Request.QueryString["pf"].Equals("albums"))
+                {
+                    args.Add(new QueryStringArg("func", "SearchForAlbums"));
+                }
+
                 DiscographyCallback pb = new DiscographyCallback();
                 pb.ProcessPostBack(args.ToArray(), this);
                 pb.DoPostBack();

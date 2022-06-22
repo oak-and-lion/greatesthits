@@ -47,6 +47,111 @@ namespace cyberBurnerWS
             return result;
         }
 
+        private DataSet SearchForBands(object[] parameters)
+        {
+            DataSet result = PrepReturn("BandsResults");
+
+            result.Tables[0].Columns.Add("id");
+            result.Tables[0].Columns.Add("name");
+
+            SqlCommand cmd = new SqlCommand("dbo._disc_getBands", _conn)
+            {
+                CommandType = CommandType.StoredProcedure
+            };
+
+            SqlDataReader reader = cmd.ExecuteReader();
+
+            while (reader.Read())
+            {
+                result.Tables[0].Rows.Add(new object[] { reader["id"], reader["bandName"] });
+            }
+
+            try
+            {
+                reader.Close();
+            }
+            catch { }
+            try
+            {
+                reader.Dispose();
+            }
+            catch { }
+
+            try
+            {
+                _conn.Close();
+            }
+            catch { }
+            try
+            {
+                _conn.Dispose();
+            }
+            catch { }
+            try
+            {
+                cmd.Dispose();
+            }
+            catch { }
+
+            return result;
+        }
+
+        private DataSet SearchForAlbums(object[] parameters)
+        {
+            DataSet result = PrepReturn("AlbumResults");
+
+            result.Tables[0].Columns.Add("id");
+            result.Tables[0].Columns.Add("id_band");
+            result.Tables[0].Columns.Add("album_year");
+            result.Tables[0].Columns.Add("id_album_type");
+
+            SqlCommand cmd = new SqlCommand("dbo._disc_getBandAlbums", _conn)
+            {
+                CommandType = CommandType.StoredProcedure
+            };
+
+            cmd.Parameters.Add(new SqlParameter("@idArtist", parameters[0].ToString()));
+            cmd.Parameters.Add(new SqlParameter("@idAlbumType", parameters[2].ToString()));
+            cmd.Parameters.Add(new SqlParameter("@minYear", parameters[7].ToString()));
+            cmd.Parameters.Add(new SqlParameter("@maxYear", parameters[8].ToString()));
+
+            SqlDataReader reader = cmd.ExecuteReader();
+
+            while (reader.Read())
+            {
+                result.Tables[0].Rows.Add(new object[] { reader["id"], reader["idBand"], reader["albumYear"], reader["idAlbumType"] });
+            }
+
+            try
+            {
+                reader.Close();
+            }
+            catch { }
+            try
+            {
+                reader.Dispose();
+            }
+            catch { }
+
+            try
+            {
+                _conn.Close();
+            }
+            catch { }
+            try
+            {
+                _conn.Dispose();
+            }
+            catch { }
+            try
+            {
+                cmd.Dispose();
+            }
+            catch { }
+
+            return result;
+        }
+
         private DataSet SearchForTracks(object[] parameters)
         {
             DataSet result = PrepReturn("TrackResults");
@@ -60,8 +165,10 @@ namespace cyberBurnerWS
             result.Tables[0].Columns.Add("artist");
             result.Tables[0].Columns.Add("writers");
 
-            SqlCommand cmd = new SqlCommand("dbo._disc_searchTracks", _conn);
-            cmd.CommandType = CommandType.StoredProcedure;
+            SqlCommand cmd = new SqlCommand("dbo._disc_searchTracks", _conn)
+            {
+                CommandType = CommandType.StoredProcedure
+            };
 
             cmd.Parameters.Add(new SqlParameter("@idArtist", parameters[0].ToString()));
             cmd.Parameters.Add(new SqlParameter("@trackNumber", parameters[1].ToString()));
@@ -69,6 +176,7 @@ namespace cyberBurnerWS
             cmd.Parameters.Add(new SqlParameter("@idAlbum", parameters[3].ToString()));
             cmd.Parameters.Add(new SqlParameter("@maxtime", parameters[4].ToString()));
             cmd.Parameters.Add(new SqlParameter("@mintime", parameters[5].ToString()));
+            cmd.Parameters.Add(new SqlParameter("@writers", parameters[6].ToString()));
 
             SqlDataReader reader = cmd.ExecuteReader();
 

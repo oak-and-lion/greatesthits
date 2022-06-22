@@ -1,4 +1,4 @@
-﻿using System.Data;
+using System.Data;
 using System.Text;
 
 namespace cyberBurnerWS
@@ -17,9 +17,14 @@ namespace cyberBurnerWS
 
         public void DoPostBack()
         {
-            object[] parameters = new object[8];
+            object[] parameters = new object[9];
             for (int x = 0; x < parameters.Length; x++)
                 parameters[x] = 0;
+
+            parameters[6] = "";
+            parameters[8] = 9999;
+
+            string func = "SearchForTracks";
 
             foreach (QueryStringArg arg in _queryArgs)
             {
@@ -47,10 +52,26 @@ namespace cyberBurnerWS
                 {
                     parameters[5] = arg.Value;
                 }
+                else if (arg.Arg.Equals("writers"))
+                {
+                    parameters[6] = arg.Value;
+                }
+                else if (arg.Arg.Equals("minYear"))
+                {
+                    parameters[7] = arg.Value;
+                }
+                else if (arg.Arg.Equals("maxYear"))
+                {
+                    parameters[8] = arg.Value;
+                }
+                else if (arg.Arg.Equals("func"))
+                {
+                    func = arg.Value;
+                }
             }
 
             DataAccess dataAccess = new DataAccess("Burner");
-            DataSet result = dataAccess.RetrieveData("SearchForTracks", parameters);
+            DataSet result = dataAccess.RetrieveData(func, parameters);
             FormatResult(result);
         }
 
