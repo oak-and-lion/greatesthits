@@ -15,3 +15,23 @@ Properties/
 cyberBurnerWS.csproj.user
 cyberBurnerWS.csproj
 Global.asax.cs
+GreatestHitsBackend/
+GreatestHits/
+GreatestHitsBackend/Global.asax.cs
+GreatestHitsBackend/Default.aspx
+GreatestHitsBackend/Default.aspx.cs
+GreatestHitsBackend/Default.aspx.designer.cs
+GreatestHitsBackend/Global.asax
+GreatestHitsBackend/Web.config
+GreatestHitsBackend/.vs
+GreatestHitsBackend/App_Data
+GreatestHitsBackend/bin
+GreatestHitsBackend/Models
+GreatestHitsBackend/My Project
+GreatestHitsBackend/obj
+GreatestHitsBackend/packages
+GreatestHitsBackend/packages.config
+GreatestHitsBackend/Global.asax.vb
+GreatestHitsBackend/GreatestHits.sln
+GreatestHitsBackend/GreatestHits.vbproj
+GreatestHitsBackend/GreatestHits.vbproj.user
