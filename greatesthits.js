@@ -3,6 +3,14 @@
 greatest.lastTrack = 0;
 greatest.allTracks = false;
 greatest.dataset = [];
+greatest.getBands = function () {
+    greatest.send(greatest.bandsResponse, "?pf=bands");
+};
+
+greatest.bandsResponse = function (o) {
+
+};
+
 greatest.search = function () {
     greatest.allTracks = false;
     var result = document.getElementById("result");
