@@ -15,7 +15,7 @@ greatest.search = function () {
     }
     greatest.dataset = [];
     greatest.lastTrack = tn;
-    greatest.send(greatest.searchResponse, "?tracknumber="+tn);
+    greatest.send(greatest.searchResponse, "?pf=&tracknumber="+tn);
 };
 
 greatest.searchResponse = function (o) {
