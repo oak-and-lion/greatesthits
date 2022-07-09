@@ -77,7 +77,7 @@ greatest.searchResponse = function (o) {
     if (greatest.allTracks) {
         greatest.lastTrack++;
         if (greatest.lastTrack < 12) {
-            greatest.send(greatest.searchResponse, "?tracknumber=" + greatest.lastTrack);
+            greatest.send(greatest.searchResponse, "?pf=&tracknumber=" + greatest.lastTrack);
         }
     }
 };

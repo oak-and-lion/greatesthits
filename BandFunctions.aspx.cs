@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Configuration;
 using System.Text;
 
 namespace cyberBurnerWS
@@ -10,10 +12,36 @@ namespace cyberBurnerWS
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            string[] entries = ConfigurationManager.AppSettings["cors"].Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
+
+            var value = Request.Headers["Origin"];
+            if (value != null)
+            {
+                bool found = false;
+                foreach (string entry in entries)
+                {
+                    if (entry == value)
+                    {
+                        Response.Headers.Add("Access-Control-Allow-Origin", entry);
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (!found)
+                {
+                    Response.Headers.Add("Access-Control-Allow-Origin", "invalid");
+                }
+            }
+
             if (Request.QueryString["pf"] == "ip")
             {
                 Response.ContentType = "text/plain";
                 Response.Write(Request.UserHostAddress);
+            }
+            else if (Request.QueryString["pf"] == "cors")
+            {
+                
             }
             else
             {
