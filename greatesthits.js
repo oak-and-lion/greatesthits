@@ -1,5 +1,6 @@
 ﻿var greatest = greatest || {};
 
+greatest.apiUrl = "http://localhost:51882/BandFunctions.aspx"; // "https://childsheartyoga.com/BandFunctions.aspx";
 greatest.lastTrack = 0;
 greatest.allTracks = false;
 greatest.dataset = [];
@@ -146,6 +147,9 @@ greatest.send = function (callback,params) {
         // end of state change: it can be after some time (async)
     };
 
-    xhr.open('GET', "https://childsheartyoga.com/BandFunctions.aspx" + params, true);
+    xhr.open('GET', greatest.apiUrl + params, true);
     xhr.send();
 };
+
+// first call
+greatest.getBands();

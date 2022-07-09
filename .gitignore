@@ -1,4 +1,6 @@
-﻿/App_Data
+﻿webServer.exe
+webServerFilter.txt
+/App_Data
 Default.aspx
 Default.aspx.cs
 Default.aspx.designer.cs

@@ -12,9 +12,16 @@ namespace cyberBurnerWS
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            string[] entries = ConfigurationManager.AppSettings["cors"].Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
+            string corsEntries = ConfigurationManager.AppSettings["cors"];
+            string value = null;
+            string[] entries = new string[0];
 
-            var value = Request.Headers["Origin"];
+            if (corsEntries != null)
+            {
+                entries = corsEntries.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
+
+                value = Request.Headers["Origin"];
+            }
             if (value != null)
             {
                 bool found = false;
@@ -39,10 +46,6 @@ namespace cyberBurnerWS
                 Response.ContentType = "text/plain";
                 Response.Write(Request.UserHostAddress);
             }
-            else if (Request.QueryString["pf"] == "cors")
-            {
-                
-            }
             else
             {
                 List<QueryStringArg> args = new List<QueryStringArg>();
@@ -56,7 +59,7 @@ namespace cyberBurnerWS
                 {
                     args.Add(new QueryStringArg("func", "SearchForBands"));
                 }
-                else if (Request.QueryString["pf"].Equals("albums"))
+                else if (Request.QueryString["pf"] == "albums")
                 {
                     args.Add(new QueryStringArg("func", "SearchForAlbums"));
                 }
