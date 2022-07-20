@@ -3,7 +3,11 @@ declare @bands TABLE (bandname VARCHAR(1024), id int identity)
 insert into @bands
     (bandname)
 VALUES
-    ('Iron Maiden'), ('Alice Cooper'), ('Rush'), ('Motorhead')
+    	  ('Iron Maiden')
+	, ('Alice Cooper')
+	, ('Rush')
+	, ('Motorhead')
+	, ('The Cure')
 
 
 

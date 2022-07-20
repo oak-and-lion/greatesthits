@@ -5,7 +5,7 @@ GO
 ALTER PROCEDURE [dbo].[_disc_getMaxTracks] (@idArtist INT)
 AS
 BEGIN
-    SELECT MAX(a.tracknumber) 
+    SELECT MAX(a.tracknumber) AS maxTracks
         FROM _bandtrack a
             INNER JOIN _bandAlbum b on b.id = a.idAlbum
         WHERE b.idBand = @idArtist

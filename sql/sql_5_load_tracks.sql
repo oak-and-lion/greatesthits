@@ -115,7 +115,7 @@ VALUES
     (@idAlbum, 1, 4*60+13, 'Tailgunner','Dickinson|Harris')
     , (@idAlbum, 2, 3*60+47, 'Holy Smoke','Harris|Dickinson')
     , (@idAlbum, 3, 4*60+22,'No Prayer for the Dying','Harris')
-    , (@idAlbum, 4, 4*60+3, 'PUblic Enema Number One','Murray|Dickinson')
+    , (@idAlbum, 4, 4*60+3, 'Public Enema Number One','Murray|Dickinson')
     , (@idAlbum, 5, 4*60+9, 'Fates Warning','Harris|Murray')
     , (@idAlbum, 6, 4*60+16, 'The Assassin','Harris')
     , (@idAlbum, 7, 4*60+34, 'Run Silent Run Deep','Harris|Dickinson')
@@ -229,8 +229,3 @@ BEGIN
     END
     set @count = @count + 1
 END
-
-select * from _BandTrack order by idAlbum, tracknumber
-select * from _BandTrack2Writer
-
---TRUNCATE TABLE _BandTrack2Writer

@@ -9,7 +9,59 @@ greatest.getBands = function () {
 };
 
 greatest.bandsResponse = function (o) {
+    var bands = o.bands;
+    var chooser = document.getElementById("band_list");
+    for (var i = 0; i < bands.length; i++) {
+        var opt = document.createElement('option');
+        opt.value = bands[i].id;
+        opt.innerHTML = bands[i].name;
+        chooser.appendChild(opt);
+    }
+};
 
+greatest.getMaxTracks = function (ts) {
+    var chooser = document.getElementById("trackselect");
+    chooser.options.length = 0;
+    var id = ts.options[ts.selectedIndex].value;
+    var band_name = ts.options[ts.selectedIndex].text;
+    if (parseInt(id) > 0) {
+        greatest.send(greatest.maxTracksResponse, "?pf=maxtracks&artist=" + id);
+    } else {
+        var ts = document.getElementById("type_list");
+        ts.value = "0";
+        greatest.showListType(ts);
+        band_name = "";
+    }
+
+    var band_names = document.getElementsByName("band_name");
+    for (var i = 0; i < band_names.length; i++) {
+        band_names[i].innerHTML = band_name;
+    }
+};
+
+greatest.maxTracksResponse = function (o) {
+    var maxtracks = o.maxtracks[0].max;
+    var chooser = document.getElementById("trackselect");
+    for (var i = 0; i < maxtracks; i++) {
+        var opt = document.createElement('option');
+        opt.value = i+1;
+        opt.innerHTML = i+1;
+        chooser.appendChild(opt);
+    }
+    sned
+};
+
+greatest.showListType = function (ts) {
+    var list_divs = document.getElementsByName("list_div");
+    for (var i = 0; i < list_divs.length; i++) {
+        list_divs[i].style.display = "none";
+    }
+    var s = ts.options[ts.selectedIndex].value;
+    if (s == 1) {
+        document.getElementById("hits_div").style.display = "block";
+    } else if (s == 2) {
+        document.getElementById("writers_div").style.display = "block";
+    }
 };
 
 greatest.search = function () {

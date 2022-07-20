@@ -49,7 +49,7 @@ namespace cyberBurnerWS
 
         private DataSet SearchForBands(object[] parameters)
         {
-            DataSet result = PrepReturn("BandsResults");
+            DataSet result = PrepReturn("bands");
 
             result.Tables[0].Columns.Add("id");
             result.Tables[0].Columns.Add("name");
@@ -98,7 +98,7 @@ namespace cyberBurnerWS
 
         private DataSet SearchForAlbums(object[] parameters)
         {
-            DataSet result = PrepReturn("AlbumResults");
+            DataSet result = PrepReturn("albums");
 
             result.Tables[0].Columns.Add("id");
             result.Tables[0].Columns.Add("id_band");
@@ -154,7 +154,7 @@ namespace cyberBurnerWS
 
         private DataSet SearchForTracks(object[] parameters)
         {
-            DataSet result = PrepReturn("TrackResults");
+            DataSet result = PrepReturn("tracks");
 
             result.Tables[0].Columns.Add("track_title");
             result.Tables[0].Columns.Add("length");
@@ -183,6 +183,56 @@ namespace cyberBurnerWS
             while (reader.Read())
             {
                 result.Tables[0].Rows.Add(new object[] { reader["track title"], reader["length"], reader["album"], reader["releaseYear"], reader["track number"], reader["album type"], reader["artist"], reader["writer(s)"] });
+            }
+
+            try
+            {
+                reader.Close();
+            }
+            catch { }
+            try
+            {
+                reader.Dispose();
+            }
+            catch { }
+
+            try
+            {
+                _conn.Close();
+            }
+            catch { }
+            try
+            {
+                _conn.Dispose();
+            }
+            catch { }
+            try
+            {
+                cmd.Dispose();
+            }
+            catch { }
+
+            return result;
+        }
+
+        private DataSet GetMaxTracks(object[] parameters)
+        {
+            DataSet result = PrepReturn("maxtracks");
+
+            result.Tables[0].Columns.Add("max");
+
+            SqlCommand cmd = new SqlCommand("dbo._disc_getMaxTracks", _conn)
+            {
+                CommandType = CommandType.StoredProcedure
+            };
+
+            cmd.Parameters.Add(new SqlParameter("@idArtist", parameters[0].ToString()));
+
+            SqlDataReader reader = cmd.ExecuteReader();
+
+            while (reader.Read())
+            {
+                result.Tables[0].Rows.Add(new object[] { reader["maxTracks"] });
             }
 
             try

@@ -16,6 +16,13 @@ namespace cyberBurnerWS
             string value = null;
             string[] entries = new string[0];
 
+            string func = Request.QueryString["pf"];
+
+            if (func == null)
+            {
+                func = string.Empty;
+            }
+
             if (corsEntries != null)
             {
                 entries = corsEntries.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
@@ -41,7 +48,7 @@ namespace cyberBurnerWS
                 }
             }
 
-            if (Request.QueryString["pf"] == "ip")
+            if (func.Equals("ip"))
             {
                 Response.ContentType = "text/plain";
                 Response.Write(Request.UserHostAddress);
@@ -55,13 +62,17 @@ namespace cyberBurnerWS
                     args.Add(new QueryStringArg(Request.Params.Keys[i], Request.Params[i]));
                 }
 
-                if (Request.QueryString["pf"] == "bands")
+                if (func.Equals("bands"))
                 {
                     args.Add(new QueryStringArg("func", "SearchForBands"));
                 }
-                else if (Request.QueryString["pf"] == "albums")
+                else if (func.Equals("albums"))
                 {
                     args.Add(new QueryStringArg("func", "SearchForAlbums"));
+                }
+                else if (func.Equals("maxtracks"))
+                {
+                    args.Add(new QueryStringArg("func", "GetMaxTracks"));
                 }
 
                 DiscographyCallback pb = new DiscographyCallback();

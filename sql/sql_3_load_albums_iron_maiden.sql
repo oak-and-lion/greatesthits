@@ -11,9 +11,9 @@ select @id = id from _Band where bandname = 'Iron Maiden'
 insert into @album
     (idBand, albumName, albumYear, idAlbumType)
 VALUES
-    (@id, 'Iron Maiden', 1980, @studioAlbumId), 
-    (@id, 'Killers', 1981, @studioAlbumId), 
-    (@id, 'Number of the Beast', 1982, @studioAlbumId)
+      (@id, 'Iron Maiden', 1980, @studioAlbumId)
+    , (@id, 'Killers', 1981, @studioAlbumId)
+    , (@id, 'Number of the Beast', 1982, @studioAlbumId)
     , (@id, 'Piece of Mind', 1983, @studioAlbumId)
     , (@id, 'Powerslave', 1984, @studioAlbumId)
     , (@id, 'Somewhere in Time', 1986, @studioAlbumId)
