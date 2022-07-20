@@ -1,6 +1,5 @@
 ﻿var greatest = greatest || {};
 
-greatest.apiUrl = "http://localhost:51882/BandFunctions.aspx"; // "https://childsheartyoga.com/BandFunctions.aspx";
 greatest.lastTrack = 0;
 greatest.allTracks = false;
 greatest.dataset = [];
@@ -244,6 +243,3 @@ greatest.getSelectValues = function(select) {
     }
     return result;
 };
-
-// first call
-greatest.getBands();
