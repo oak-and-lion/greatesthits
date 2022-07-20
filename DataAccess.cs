@@ -54,10 +54,7 @@ namespace cyberBurnerWS
             result.Tables[0].Columns.Add("id");
             result.Tables[0].Columns.Add("name");
 
-            SqlCommand cmd = new SqlCommand("dbo._disc_getBands", _conn)
-            {
-                CommandType = CommandType.StoredProcedure
-            };
+            SqlCommand cmd = PrepCmd("dbo._disc_getBands");
 
             SqlDataReader reader = cmd.ExecuteReader();
 
@@ -66,32 +63,7 @@ namespace cyberBurnerWS
                 result.Tables[0].Rows.Add(new object[] { reader["id"], reader["bandName"] });
             }
 
-            try
-            {
-                reader.Close();
-            }
-            catch { }
-            try
-            {
-                reader.Dispose();
-            }
-            catch { }
-
-            try
-            {
-                _conn.Close();
-            }
-            catch { }
-            try
-            {
-                _conn.Dispose();
-            }
-            catch { }
-            try
-            {
-                cmd.Dispose();
-            }
-            catch { }
+            CloseDown(cmd, reader);
 
             return result;
         }
@@ -105,10 +77,7 @@ namespace cyberBurnerWS
             result.Tables[0].Columns.Add("album_year");
             result.Tables[0].Columns.Add("id_album_type");
 
-            SqlCommand cmd = new SqlCommand("dbo._disc_getBandAlbums", _conn)
-            {
-                CommandType = CommandType.StoredProcedure
-            };
+            SqlCommand cmd = PrepCmd("dbo._disc_getBandAlbums");
 
             cmd.Parameters.Add(new SqlParameter("@idArtist", parameters[0].ToString()));
             cmd.Parameters.Add(new SqlParameter("@idAlbumType", parameters[2].ToString()));
@@ -122,32 +91,7 @@ namespace cyberBurnerWS
                 result.Tables[0].Rows.Add(new object[] { reader["id"], reader["idBand"], reader["albumYear"], reader["idAlbumType"] });
             }
 
-            try
-            {
-                reader.Close();
-            }
-            catch { }
-            try
-            {
-                reader.Dispose();
-            }
-            catch { }
-
-            try
-            {
-                _conn.Close();
-            }
-            catch { }
-            try
-            {
-                _conn.Dispose();
-            }
-            catch { }
-            try
-            {
-                cmd.Dispose();
-            }
-            catch { }
+            CloseDown(cmd, reader);
 
             return result;
         }
@@ -165,10 +109,7 @@ namespace cyberBurnerWS
             result.Tables[0].Columns.Add("artist");
             result.Tables[0].Columns.Add("writers");
 
-            SqlCommand cmd = new SqlCommand("dbo._disc_searchTracks", _conn)
-            {
-                CommandType = CommandType.StoredProcedure
-            };
+            SqlCommand cmd = PrepCmd("dbo._disc_searchTracks");
 
             cmd.Parameters.Add(new SqlParameter("@idArtist", parameters[0].ToString()));
             cmd.Parameters.Add(new SqlParameter("@trackNumber", parameters[1].ToString()));
@@ -177,6 +118,8 @@ namespace cyberBurnerWS
             cmd.Parameters.Add(new SqlParameter("@maxtime", parameters[4].ToString()));
             cmd.Parameters.Add(new SqlParameter("@mintime", parameters[5].ToString()));
             cmd.Parameters.Add(new SqlParameter("@writers", parameters[6].ToString()));
+            cmd.Parameters.Add(new SqlParameter("@minyear", parameters[7].ToString()));
+            cmd.Parameters.Add(new SqlParameter("@maxyear", parameters[8].ToString()));
 
             SqlDataReader reader = cmd.ExecuteReader();
 
@@ -185,32 +128,7 @@ namespace cyberBurnerWS
                 result.Tables[0].Rows.Add(new object[] { reader["track title"], reader["length"], reader["album"], reader["releaseYear"], reader["track number"], reader["album type"], reader["artist"], reader["writer(s)"] });
             }
 
-            try
-            {
-                reader.Close();
-            }
-            catch { }
-            try
-            {
-                reader.Dispose();
-            }
-            catch { }
-
-            try
-            {
-                _conn.Close();
-            }
-            catch { }
-            try
-            {
-                _conn.Dispose();
-            }
-            catch { }
-            try
-            {
-                cmd.Dispose();
-            }
-            catch { }
+            CloseDown(cmd, reader);
 
             return result;
         }
@@ -221,10 +139,7 @@ namespace cyberBurnerWS
 
             result.Tables[0].Columns.Add("max");
 
-            SqlCommand cmd = new SqlCommand("dbo._disc_getMaxTracks", _conn)
-            {
-                CommandType = CommandType.StoredProcedure
-            };
+            SqlCommand cmd = PrepCmd("dbo._disc_getMaxTracks");
 
             cmd.Parameters.Add(new SqlParameter("@idArtist", parameters[0].ToString()));
 
@@ -235,6 +150,36 @@ namespace cyberBurnerWS
                 result.Tables[0].Rows.Add(new object[] { reader["maxTracks"] });
             }
 
+            CloseDown(cmd, reader);
+
+            return result;
+        }
+
+        private DataSet GetWriters(object[] parameters)
+        {
+            DataSet result = PrepReturn("writers");
+
+            result.Tables[0].Columns.Add("id");
+            result.Tables[0].Columns.Add("name");
+
+            SqlCommand cmd = PrepCmd("dbo._disc_getBandWriters");
+
+            cmd.Parameters.Add(new SqlParameter("@idArtist", parameters[0].ToString()));
+
+            SqlDataReader reader = cmd.ExecuteReader();
+
+            while (reader.Read())
+            {
+                result.Tables[0].Rows.Add(new object[] { reader["id"], reader["writer"] });
+            }
+
+            CloseDown(cmd, reader);
+
+            return result;
+        }
+
+        private void CloseDown(SqlCommand cmd, SqlDataReader reader)
+        {
             try
             {
                 reader.Close();
@@ -261,8 +206,6 @@ namespace cyberBurnerWS
                 cmd.Dispose();
             }
             catch { }
-
-            return result;
         }
 
         private DataSet PrepReturn(string name)
@@ -272,6 +215,14 @@ namespace cyberBurnerWS
             result.Tables.Add(name);
 
             return result;
+        }
+
+        private SqlCommand PrepCmd(string storedProc)
+        {
+            return new SqlCommand(storedProc, _conn)
+            {
+                CommandType = CommandType.StoredProcedure
+            };
         }
     }
 }

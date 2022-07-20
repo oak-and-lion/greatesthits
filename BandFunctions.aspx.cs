@@ -74,6 +74,10 @@ namespace cyberBurnerWS
                 {
                     args.Add(new QueryStringArg("func", "GetMaxTracks"));
                 }
+                else if (func.Equals("writers"))
+                {
+                    args.Add(new QueryStringArg("func", "GetWriters"));
+                }
 
                 DiscographyCallback pb = new DiscographyCallback();
                 pb.ProcessPostBack(args.ToArray(), this);

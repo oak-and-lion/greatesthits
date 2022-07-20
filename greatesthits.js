@@ -48,7 +48,26 @@ greatest.maxTracksResponse = function (o) {
         opt.innerHTML = i+1;
         chooser.appendChild(opt);
     }
-    sned
+    greatest.getWriters(document.getElementById("band_list"));
+};
+
+greatest.getWriters = function (ts) {
+    var id = ts.options[ts.selectedIndex].value;
+    if (parseInt(id) > 0) {
+        greatest.send(greatest.getWritersResponse, "?pf=writers&artist=" + id);
+    }
+};
+
+greatest.getWritersResponse = function (o) {
+    var maxwriters = o.total;
+    var chooser = document.getElementById("writerselect");
+    for (var i = 0; i < maxwriters; i++) {
+        var opt = document.createElement('option');
+        opt.value = o.writers[i].id;
+        opt.innerHTML = o.writers[i].name;
+        chooser.appendChild(opt);
+    }
+    chooser.setAttribute("size", maxwriters);
 };
 
 greatest.showListType = function (ts) {
@@ -62,6 +81,14 @@ greatest.showListType = function (ts) {
     } else if (s == 2) {
         document.getElementById("writers_div").style.display = "block";
     }
+};
+
+greatest.searchByWriters = function () {
+    greatest.send(greatest.searchByWritersResponse, "?pf=&writers=-1," + greatest.getSelectValues(document.getElementById("writerselect")).join(","));
+};
+
+greatest.searchByWritersResponse = function (o) {
+    console.log(o);
 };
 
 greatest.search = function () {
@@ -201,6 +228,21 @@ greatest.send = function (callback,params) {
 
     xhr.open('GET', greatest.apiUrl + params, true);
     xhr.send();
+};
+
+greatest.getSelectValues = function(select) {
+    var result = [];
+    var options = select && select.options;
+    var opt;
+
+    for (var i = 0, iLen = options.length; i < iLen; i++) {
+        opt = options[i];
+
+        if (opt.selected) {
+            result.push(opt.value || opt.text);
+        }
+    }
+    return result;
 };
 
 // first call
