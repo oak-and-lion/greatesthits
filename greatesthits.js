@@ -3,6 +3,7 @@
 greatest.lastTrack = 0;
 greatest.allTracks = false;
 greatest.dataset = [];
+greatest.posOverride = "-1"
 greatest.getBands = function () {
     greatest.send(greatest.bandsResponse, "?pf=bands");
 };
@@ -83,11 +84,17 @@ greatest.showListType = function (ts) {
 };
 
 greatest.searchByWriters = function () {
-    greatest.send(greatest.searchByWritersResponse, "?pf=&writers=-1," + greatest.getSelectValues(document.getElementById("writerselect")).join(","));
+    var result = document.getElementById("writersresult");
+    result.innerHTML = "";
+    var strict = "";
+    if (document.getElementById("writerstrict").checked) {
+        strict = "-1,";
+    }
+    greatest.send(greatest.searchByWritersResponse, "?pf=&writers=" + strict + greatest.getSelectValues(document.getElementById("writerselect")).join(","));
 };
 
 greatest.searchByWritersResponse = function (o) {
-    console.log(o);
+    greatest.buildResponse(o, "writerSelectionTableBody", "writersresult", "greatest.selectTrack", false);
 };
 
 greatest.search = function () {
@@ -106,8 +113,12 @@ greatest.search = function () {
 };
 
 greatest.searchResponse = function (o) {
+    greatest.buildResponse(o, "selectionTableBody", "result", "greatest.selectTrack", true);
+};
+
+greatest.buildResponse = function (o, selectionTableBodyName, resultTableName, selectTrackFunc, usePos) {
     greatest.dataset.push(o);
-    var selectionTableBody = document.getElementById("selectionTableBody");
+    var selectionTableBody = document.getElementById(selectionTableBodyName);
     var needSelectionHeader = false;
     if (selectionTableBody.childNodes.length == 0) {
         needSelectionHeader = true;
@@ -122,6 +133,10 @@ greatest.searchResponse = function (o) {
     var a = document.createElement("th");
     headerRow.appendChild(a);
     selectionHeaderRow.appendChild(document.createElement("th"));
+    if (!usePos) {
+        selectionHeaderRow.appendChild(document.createElement("th"));
+        selectionHeaderRow.appendChild(document.createElement("th"));
+    }
     for (var x = 0; x < columns.length; x++) {
         var c = document.createElement("th");
         c.innerHTML = greatest.formatTitle(columns[x]);
@@ -146,12 +161,12 @@ greatest.searchResponse = function (o) {
         button.textContent= "Select";
         b.appendChild(button);
         row.appendChild(b);
-        button.setAttribute("onclick", "greatest.selectTrack(" + (greatest.dataset.length - 1).toString() + "," + x + "," + tracks[x]["track_number"] + ");");
-        row=greatest.buildTrackRow(row, tracks[x], columns);
+        button.setAttribute("onclick", selectTrackFunc + "(" + (greatest.dataset.length - 1).toString() + "," + x + "," + tracks[x]["track_number"] + ",'" + selectionTableBodyName + "'," + usePos + ");");
+        row = greatest.buildTrackRow(row, tracks[x], columns, greatest.posOverride);
         body.appendChild(row);
     }
     table.appendChild(body);
-    document.getElementById("result").appendChild(table);
+    document.getElementById(resultTableName).appendChild(table);
 
     if (greatest.allTracks) {
         greatest.lastTrack++;
@@ -161,25 +176,52 @@ greatest.searchResponse = function (o) {
     }
 };
 
-greatest.selectTrack = function (datasetIndex, trackIndex, trackNumber) {
+greatest.selectTrack = function (datasetIndex, trackIndex, trackNumber, selectionTableBodyName, usePos) {
+    var trackColNum = -1;
+    for (var i = 0; i < greatest.dataset[datasetIndex].columns.length; i++) {
+        if (greatest.dataset[datasetIndex].columns[i] == "track_number") {
+            trackColNum = i;
+        }
+    }
     var row = document.createElement("tr");
     var b = document.createElement("td");
     var button = document.createElement("button");
+    var tbody = document.getElementById(selectionTableBodyName);
     button.textContent = "Remove";
     b.appendChild(button);
     row.appendChild(b);
     button.setAttribute("onclick", "greatest.removeTrack(" + trackNumber + ");");
-    row = greatest.buildTrackRow(row, greatest.dataset[datasetIndex].tracks[trackIndex], greatest.dataset[datasetIndex].columns);
-    var tbody = document.getElementById("selectionTableBody");
-    var currentRows = tbody.childNodes.length;
-    var numRows = (trackNumber+1) - currentRows;
-    if (numRows > 0) {
-        for (var x = currentRows; x < trackNumber+1; x++) {
-            var r = document.createElement("tr");
-            tbody.appendChild(r);
-        }
+    var pos = String(tbody.childNodes.length);
+    if (usePos) {
+        pos = greatest.posOverride;
+    } else {
+        greatest.buildMoveButton(row, "Up","greatest.moveTrackUp(this," + String(trackColNum + 3) + ");");
+        greatest.buildMoveButton(row, "Down", "greatest.moveTrackDown(this," + String(trackColNum + 3) + ");");
     }
-    tbody.replaceChild(row, tbody.childNodes[trackNumber]);
+    row = greatest.buildTrackRow(row, greatest.dataset[datasetIndex].tracks[trackIndex], greatest.dataset[datasetIndex].columns, pos);
+    
+    var currentRows = tbody.childNodes.length;
+    if (usePos) {
+        var numRows = (trackNumber + 1) - currentRows;
+        if (numRows > 0) {
+            for (var x = currentRows; x < trackNumber + 1; x++) {
+                var r = document.createElement("tr");
+                tbody.appendChild(r);
+            }
+        }
+        tbody.replaceChild(row, tbody.childNodes[trackNumber]);
+    } else {
+        tbody.appendChild(row);
+    }
+};
+
+greatest.buildMoveButton = function (row,text,clickFunc) {
+    var upb = document.createElement("button");
+    upb.textContent = text;
+    var ub = document.createElement("td");
+    upb.setAttribute("onclick", clickFunc);
+    ub.append(upb);
+    row.appendChild(ub);
 };
 
 greatest.removeTrack = function (trackNumber) {
@@ -188,17 +230,35 @@ greatest.removeTrack = function (trackNumber) {
     tbody.replaceChild(row, tbody.childNodes[trackNumber]);
 };
 
-greatest.buildTrackRow = function (row, track, columns) {
+greatest.buildTrackRow = function (row, track, columns, posOverride) {
     if (row == null) {
         row = document.createElement("tr");
     }
     for (var y = 0; y < columns.length; y++) {
         var field = document.createElement("td");
-        field.innerHTML = track[columns[y]];
+        if (columns[y] == "track_number") {
+            if (posOverride == greatest.posOverride) {
+                field.innerHTML = track[columns[y]];
+            } else {
+                field.innerHTML = posOverride;
+            }
+        } else {
+            field.innerHTML = track[columns[y]];
+        }
         row.appendChild(field);
     }
     return row;
 }
+
+greatest.moveTrackUp = function (track, colNum) {
+    console.log("move up");
+    console.log(track);
+};
+
+greatest.moveTrackDown = function (track, colNum) {
+    console.log("move down");
+    console.log(track);
+};
 
 greatest.formatTitle = function (text) {
     var words = text.split("_");
