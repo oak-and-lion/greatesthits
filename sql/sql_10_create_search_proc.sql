@@ -125,11 +125,10 @@ BEGIN
                 )
             AND d.id = ISNULL(@idAlbumtype, d.id)
             AND b.id = ISNULL(@idAlbum, b.id)
-            AND c.seconds <= ISNULL(@maxtime, c.seconds)
-            AND c.seconds >= ISNULL(@mintime, c.seconds)
+            AND c.seconds BETWEEN ISNULL(@mintime, c.seconds) AND ISNULL(@maxtime, c.seconds)
             AND (g.idWriter IN (SELECT item from @writersList))
             AND (b.albumYear >= @minyear AND b.albumYear <= @maxyear)
-        GROUP BY c.trackname, c.seconds, b.albumname, b.albumYear, c.tracknumber, d.albumtype, a.bandname, c.id--, e.idWriter--, [writer(s)]
+        GROUP BY c.trackname, c.seconds, b.albumname, b.albumYear, c.tracknumber, d.albumtype, a.bandname, c.id
         ORDER BY b.albumYear, c.tracknumber
 
         if @strictWriterSearch = 1

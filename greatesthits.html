@@ -20,6 +20,9 @@
                 <option value="0">Select Type</option>
                 <option value="1">Greatest Hits by Track Position</option>
                 <option value="2">Greatest Hits by Writer(s)</option>
+                <option value="3">Greatest Hits by Year Range</option>
+                <option value="4">Greatest Hits by Time Range</option>
+                <option value="5">Track vs. Track</option>
             </select>
         </div>
     </div>
@@ -59,6 +62,64 @@
             <div id="writerselectionarea">
                 <table id="writerselection">
                     <tbody id="writerSelectionTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div id="year_range_div" name="list_div">
+        <h1><span name="band_name"></span> Greatest Hits by Year Range</h1>
+        <div id="year_range_list_div">
+            <select name="year_rangeselect" id="album_min_year">
+            </select>
+            <select name="year_rangeselect" id="album_max_year">
+            </select>
+            <input type="button" value="Search" onclick="greatest.searchByYearRanges();" />
+            <div id="year_rangesresultarea">
+                <div id="year_rangesresult"></div>
+            </div>
+            <div id="year_rangeselectionarea">
+                <table id="year_rangeselection">
+                    <tbody id="year_rangeSelectionTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div id="time_range_div" name="list_div">
+        <h1><span name="band_name"></span> Greatest Hits by Time Range</h1>
+        <div id="time_range_list_div">
+            <select name="time_rangeselect" id="track_min_time">
+            </select>
+            <select name="time_rangeselect" id="track_max_time">
+            </select>
+            <input type="button" value="Search" onclick="greatest.searchByTimeRanges();" />
+            <div id="time_rangesresultarea">
+                <div id="time_rangesresult"></div>
+            </div>
+            <div id="time_rangeselectionarea">
+                <table id="time_rangeselection">
+                    <tbody id="time_rangeSelectionTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div id="head_to_head_div" name="list_div">
+        <h1><span name="band_name"></span> Track vs. Track</h1>
+        <div id="head_to_head_list_div">
+            <select name="head_to_headselect" id="band_1_albums">
+            </select>
+            <select name="head_to_headselect" id="band_2" onchange="greatest.getBand2Albums(this);">
+                <option value="0">Select Band</option>
+            </select>
+            <select name="head_to_headselect" id="band_2_albums">
+            </select>
+            <input type="button" value="Search" onclick="greatest.searchTrackVsTrackBand1();" />
+            <div id="head_to_headsresultarea">
+                <span id="head_to_headresult1"></span>
+                <span id="head_to_headresult2"></span>
+            </div>
+            <div id="head_to_headselectionarea">
+                <table id="head_to_headselection">
+                    <tbody id="head_to_headSelectionTableBody"></tbody>
                 </table>
             </div>
         </div>

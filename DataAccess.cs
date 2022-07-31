@@ -76,6 +76,7 @@ namespace cyberBurnerWS
             result.Tables[0].Columns.Add("id_band");
             result.Tables[0].Columns.Add("album_year");
             result.Tables[0].Columns.Add("id_album_type");
+            result.Tables[0].Columns.Add("album_name");
 
             SqlCommand cmd = PrepCmd("dbo._disc_getBandAlbums");
 
@@ -88,7 +89,7 @@ namespace cyberBurnerWS
 
             while (reader.Read())
             {
-                result.Tables[0].Rows.Add(new object[] { reader["id"], reader["idBand"], reader["albumYear"], reader["idAlbumType"] });
+                result.Tables[0].Rows.Add(new object[] { reader["id"], reader["idBand"], reader["albumYear"], reader["idAlbumType"], reader["albumName"] });
             }
 
             CloseDown(cmd, reader);
@@ -171,6 +172,29 @@ namespace cyberBurnerWS
             while (reader.Read())
             {
                 result.Tables[0].Rows.Add(new object[] { reader["id"], reader["writer"] });
+            }
+
+            CloseDown(cmd, reader);
+
+            return result;
+        }
+
+        private DataSet GetAlbumYears(object[] parameters)
+        {
+            DataSet result = PrepReturn("albumyears");
+
+            result.Tables[0].Columns.Add("idBand");
+            result.Tables[0].Columns.Add("year");
+
+            SqlCommand cmd = PrepCmd("dbo._disc_getBandAlbumYears");
+
+            cmd.Parameters.Add(new SqlParameter("@idArtist", parameters[0].ToString()));
+
+            SqlDataReader reader = cmd.ExecuteReader();
+
+            while (reader.Read())
+            {
+                result.Tables[0].Rows.Add(new object[] { reader["idBand"], reader["albumYear"] });
             }
 
             CloseDown(cmd, reader);

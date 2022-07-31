@@ -78,6 +78,10 @@ namespace cyberBurnerWS
                 {
                     args.Add(new QueryStringArg("func", "GetWriters"));
                 }
+                else if (func.Equals("years"))
+                {
+                    args.Add(new QueryStringArg("func", "GetAlbumYears"));
+                }
 
                 DiscographyCallback pb = new DiscographyCallback();
                 pb.ProcessPostBack(args.ToArray(), this);
