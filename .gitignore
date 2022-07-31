@@ -1,4 +1,4 @@
-﻿webServer.exe
+webServer.exe
 webServerFilter.txt
 /App_Data
 Default.aspx
@@ -37,3 +37,5 @@ GreatestHitsBackend/Global.asax.vb
 GreatestHitsBackend/GreatestHits.sln
 GreatestHitsBackend/GreatestHits.vbproj
 GreatestHitsBackend/GreatestHits.vbproj.user
+web.txt
+webServer
