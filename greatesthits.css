@@ -2,11 +2,32 @@
     text-align: left;
 }
 
+h1,body,html {
+    padding: 0;
+    margin: 0;
+    margin-block-start: 0;
+    margin-block-end: 0;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+}
+
 #main {
+    border-bottom: 2px solid black;
+}
+
+#main h1 {
     min-height: 50px;
     max-height: 50px;
     height: 50px;
-    border: 1px solid red;
     text-align: center;
     vertical-align: middle;
+    line-height:50px;
+}
+
+div[name="list_div"] {
+    display:none;
+}
+
+div[name="header_chooser"] {
+    display:inline-block;
 }

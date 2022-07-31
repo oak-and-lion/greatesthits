@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Configuration;
 using System.Text;
 
 namespace cyberBurnerWS
@@ -10,7 +12,43 @@ namespace cyberBurnerWS
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (Request.QueryString["pf"] == "ip")
+            string corsEntries = ConfigurationManager.AppSettings["cors"];
+            string value = null;
+            string[] entries = new string[0];
+
+            string func = Request.QueryString["pf"];
+
+            if (func == null)
+            {
+                func = string.Empty;
+            }
+
+            if (corsEntries != null)
+            {
+                entries = corsEntries.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
+
+                value = Request.Headers["Origin"];
+            }
+            if (value != null)
+            {
+                bool found = false;
+                foreach (string entry in entries)
+                {
+                    if (entry == value)
+                    {
+                        Response.Headers.Add("Access-Control-Allow-Origin", entry);
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (!found)
+                {
+                    Response.Headers.Add("Access-Control-Allow-Origin", "invalid");
+                }
+            }
+
+            if (func.Equals("ip"))
             {
                 Response.ContentType = "text/plain";
                 Response.Write(Request.UserHostAddress);
@@ -24,13 +62,25 @@ namespace cyberBurnerWS
                     args.Add(new QueryStringArg(Request.Params.Keys[i], Request.Params[i]));
                 }
 
-                if (Request.QueryString["pf"] == "bands")
+                if (func.Equals("bands"))
                 {
                     args.Add(new QueryStringArg("func", "SearchForBands"));
                 }
-                else if (Request.QueryString["pf"].Equals("albums"))
+                else if (func.Equals("albums"))
                 {
                     args.Add(new QueryStringArg("func", "SearchForAlbums"));
+                }
+                else if (func.Equals("maxtracks"))
+                {
+                    args.Add(new QueryStringArg("func", "GetMaxTracks"));
+                }
+                else if (func.Equals("writers"))
+                {
+                    args.Add(new QueryStringArg("func", "GetWriters"));
+                }
+                else if (func.Equals("years"))
+                {
+                    args.Add(new QueryStringArg("func", "GetAlbumYears"));
                 }
 
                 DiscographyCallback pb = new DiscographyCallback();

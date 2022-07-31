@@ -15,6 +15,13 @@ insert into @writers
     (writer, idBand)
 VALUES
     ('Cooper', @idBand)
+
+select @idBand = id from _Band where bandname = 'Rush'
+
+insert into @writers
+    (writer, idBand)
+VALUES
+    ('Lee', @idBand),('Lifeson', @idBand),('Peart', @idBand)
     
 if not exists (select 1 from INFORMATION_SCHEMA.TABLES where TABLE_NAME = '_BandWriter')
 BEGIN

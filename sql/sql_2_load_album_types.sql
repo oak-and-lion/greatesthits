@@ -3,7 +3,9 @@ declare @type as TABLE (albumtype varchar(50), id int identity)
 insert into @type
     (albumtype)
 VALUES
-    ('Studio'), ('Live'), ('Collection')
+	  ('Studio')
+	, ('Live')
+	, ('Collection')
 
 if not exists (select 1 from INFORMATION_SCHEMA.TABLES where TABLE_NAME = '_BandAlbumType')
 BEGIN

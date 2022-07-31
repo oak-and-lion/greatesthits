@@ -99,7 +99,7 @@ namespace cyberBurnerWS
                 stringBuilder.Append(dataColumn.ColumnName);
                 stringBuilder.Append("\"");
             }
-            stringBuilder.Append("],\"tracks\":[");
+            stringBuilder.Append("],\"" + dataTable.TableName + "\":[");
 
             bool firstRow = true;
             foreach(DataRow row in dataTable.Rows)

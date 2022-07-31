@@ -1,3 +1,6 @@
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE type = 'P' AND OBJECT_ID = OBJECT_ID('dbo._disc_getBands'))
+   exec('CREATE PROCEDURE [dbo].[_disc_getBands] AS BEGIN SET NOCOUNT ON; END')
+GO
 
 ALTER PROCEDURE dbo._disc_getBands
 AS
