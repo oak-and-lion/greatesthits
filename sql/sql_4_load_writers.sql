@@ -21,7 +21,7 @@ select @idBand = id from _Band where bandname = 'Rush'
 insert into @writers
     (writer, idBand)
 VALUES
-    ('Lee', @idBand),('Lifeson', @idBand),('Peart', @idBand)
+    ('Lee', @idBand),('Lifeson', @idBand),('Peart', @idBand), ('Talbot', @idBand), ('Dubois', @idBand), ('Mink', @idBand)
     
 if not exists (select 1 from INFORMATION_SCHEMA.TABLES where TABLE_NAME = '_BandWriter')
 BEGIN
