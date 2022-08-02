@@ -107,9 +107,13 @@ greatest.getAlbumYearsResponse = function (o) {
 };
 
 greatest.getBandAlbums = function (ts) {
+    greatest.getBandAlbumsGeneric(ts, greatest.getBandAlbumsResponse);
+};
+
+greatest.getBandAlbumsGeneric = function (ts, callback) {
     var id = ts.options[ts.selectedIndex].value;
     if (parseInt(id) > 0) {
-        greatest.send(greatest.getBandAlbumsResponse, "?pf=albums&minYear=0&maxYear=9999&artist=" + id);
+        greatest.send(callback, "?pf=albums&minYear=0&maxYear=9999&artist=" + id);
     }
 };
 
@@ -119,13 +123,11 @@ greatest.getBandAlbumsResponse = function (o) {
     for (var i = 0; i < o.total; i++) {
         band_1.appendChild(greatest.createOption(o.albums[i].id, o.albums[i].album_name));
     }
+    greatest.buildResponse(o, "album_rankerSelectionTableBody", "album_rankersresult", "greatest.selectTrack", false);
 };
 
 greatest.getBand2Albums = function (ts) {
-    var id = ts.options[ts.selectedIndex].value;
-    if (parseInt(id) > 0) {
-        greatest.send(greatest.getBand2AlbumsResponse, "?pf=albums&minYear=0&maxYear=9999&artist=" + id);
-    }
+    greatest.getBandAlbumsGeneric(ts, greatest.getBand2AlbumsResponse);
 };
 
 greatest.getBand2AlbumsResponse = function (o) {
@@ -166,6 +168,9 @@ greatest.showListType = function (ts) {
         document.getElementById("head_to_head_div").style.display = "block";
     } else if (s == 6) {
         document.getElementById("opener_closer_div").style.display = "block";
+    }
+    else if (s == 7) {
+        document.getElementById("album_ranker_div").style.display = "block";
     }
 };
 
@@ -289,6 +294,9 @@ greatest.buildResponse = function (o, selectionTableBodyName, resultTableName, s
     table.appendChild(header);
     
     var tracks = o.tracks;
+    if (tracks == undefined) {
+        tracks = o.albums;
+    }
     for (var x = 0; x < tracks.length; x++) {
         var row = document.createElement("tr");
         var b = document.createElement("td");
