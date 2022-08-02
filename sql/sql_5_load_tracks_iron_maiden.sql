@@ -281,7 +281,7 @@ BEGIN
 END
 
 set @idAlbum = null
-select @idAlbum = id from _BandAlbum where idBand = @idBand and albumname = 'Senutsu'
+select @idAlbum = id from _BandAlbum where idBand = @idBand and albumname = 'Senjutsu'
 if @idAlbum is not NULL
 BEGIN
     Insert into @tracks
