@@ -142,7 +142,7 @@ BEGIN
         , (@idAlbum, 3, 4*60+26,'YYZ (Instrumental)','Lee|Peart')
         , (@idAlbum, 4, 4*60+20, 'Limelight','Lee|Lifeson|Peart')
         , (@idAlbum, 5, 10*60+58, 'The Camera Eye','Lee|Lifeson|Peart')
-        , (@idAlbum, 6, 4*60+46, 'Witch Hunt (Part III of "Fear")','Lee|Peart|Lifeson')
+        , (@idAlbum, 6, 4*60+46, 'Witch Hunt (Part III of Fear)','Lee|Peart|Lifeson')
         , (@idAlbum, 7, 4*60+46, 'Vital Signs','Lee|Lifeson|Peart')
 END
 
@@ -158,7 +158,7 @@ BEGIN
         , (@idAlbum, 2, 4*60+47, 'The Analog Kid','Lee|Lifeson|Peart')
         , (@idAlbum, 3, 4*60+57,'Chemistry','Lifeson|Lee|Peart')
         , (@idAlbum, 4, 6*60+23, 'Digital Man','Lee|Lifeson|Peart')
-        , (@idAlbum, 5, 6*60+24, 'The Weapon (Part II of "Fear")','Lee|Lifeson|Peart')
+        , (@idAlbum, 5, 6*60+24, 'The Weapon (Part II of Fear)','Lee|Lifeson|Peart')
         , (@idAlbum, 6, 3*60+42, 'New World Man','Lee|Peart|Lifeson')
         , (@idAlbum, 7, 5*60+49, 'Losing It','Lee|Lifeson|Peart|Mink')
         , (@idAlbum, 8, 5*60+49, 'Countdown','Lee|Peart|Lifeson')
@@ -175,7 +175,7 @@ BEGIN
         (@idAlbum, 1, 4*60+56, 'Distant Early Warning','Lee|Lifeson|Peart')
         , (@idAlbum, 2, 5*60+4, 'Afterimage','Lee|Lifeson|Peart')
         , (@idAlbum, 3, 5*60+10,'Red Sector A','Lifeson|Lee|Peart')
-        , (@idAlbum, 4, 4*60+33, 'The Enemy Within (Part I of "Fear")','Lee|Lifeson|Peart')
+        , (@idAlbum, 4, 4*60+33, 'The Enemy Within (Part I of Fear)','Lee|Lifeson|Peart')
         , (@idAlbum, 5, 5*60+0, 'The Body Electric','Lee|Lifeson|Peart')
         , (@idAlbum, 6, 4*60+18, 'Kid Gloves','Lee|Peart|Lifeson')
         , (@idAlbum, 7, 4*60+42, 'Red Lenses','Lee|Lifeson|Peart')
@@ -253,7 +253,7 @@ BEGIN
         , (@idAlbum, 2, 4*60+35, 'Bravado','Lee|Lifeson|Peart')
         , (@idAlbum, 3, 5*60+30,'Roll the Bones','Lifeson|Lee|Peart')
         , (@idAlbum, 4, 3*60+54, 'Face Up','Lee|Lifeson|Peart')
-        , (@idAlbum, 5, 3*60+49, 'Where''s My Thing? (Part IV, "Gangster of Boats" Trilogy','Lee|Lifeson|Peart')
+        , (@idAlbum, 5, 3*60+49, 'Where''s My Thing? (Part IV, Gangster of Boats Trilogy','Lee|Lifeson|Peart')
         , (@idAlbum, 6, 5*60+13, 'The Big Wheel','Lee|Peart|Lifeson')
         , (@idAlbum, 7, 5*60+27, 'Heresy','Lee|Lifeson|Peart')
         , (@idAlbum, 8, 5*60+18, 'Ghost of a Chance','Lee|Peart|Lifeson')
@@ -322,7 +322,7 @@ BEGIN
         , (@idAlbum, 9, 5*60+38, 'Earthshine','Lee|Lifeson|Peart')
         , (@idAlbum, 10, 3*60+40, 'Sweet Miracle','Lee|Peart|Lifeson')
         , (@idAlbum, 11, 4*60+49, 'Nocturne','Lee|Peart|Lifeson')
-        , (@idAlbum, 12, 6*60+21, 'Freeze (Part IV of "Fear")','Lee|Peart|Lifeson')
+        , (@idAlbum, 12, 6*60+21, 'Freeze (Part IV of Fear)','Lee|Peart|Lifeson')
         , (@idAlbum, 13, 5*60+3, 'Out of the Cradle','Lee|Peart|Lifeson')
 END
 

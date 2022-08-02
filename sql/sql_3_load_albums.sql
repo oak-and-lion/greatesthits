@@ -24,7 +24,7 @@ BEGIN
         , (@id, 'No Prayer for the Dying', 1990, @studioAlbumId)
         , (@id, 'Fear of the Dark', 1992, @studioAlbumId)
         , (@id, 'The X Factor', 1995, @studioAlbumId)
-        , (@id, 'Virtual XI', 1988, @studioAlbumId)
+        , (@id, 'Virtual XI', 1998, @studioAlbumId)
         , (@id, 'Brave New World', 2000, @studioAlbumId)
         , (@id, 'Dance of Death', 2003, @studioAlbumId)
         , (@id, 'A Matter of Life and Death', 2006, @studioAlbumId)
