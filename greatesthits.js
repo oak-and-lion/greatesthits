@@ -164,6 +164,8 @@ greatest.showListType = function (ts) {
         document.getElementById("time_range_div").style.display = "block";
     } else if (s == 5) {
         document.getElementById("head_to_head_div").style.display = "block";
+    } else if (s == 6) {
+        document.getElementById("opener_closer_div").style.display = "block";
     }
 };
 
@@ -174,7 +176,7 @@ greatest.searchByWriters = function () {
     if (document.getElementById("writerstrict").checked) {
         strict = "-1,";
     }
-    greatest.send(greatest.searchByWritersResponse, "?pf=&writers=" + strict + greatest.getSelectValues(document.getElementById("writerselect")).join(","));
+    greatest.send(greatest.searchByWritersResponse, "?pf=&writers=" + strict + greatest.getSelectValues(document.getElementById("writerselect")).join(",") + greatest.bandIdValue());
 };
 
 greatest.searchByWritersResponse = function (o) {
@@ -184,7 +186,7 @@ greatest.searchByWritersResponse = function (o) {
 greatest.searchByYearRanges = function () {
     var result = document.getElementById("year_rangesresult");
     result.innerHTML = "";
-    greatest.send(greatest.searchByYearRangesResponse, "?pf=&minYear=" + greatest.getSelectValues(document.getElementById("album_min_year")) + "&maxYear=" + greatest.getSelectValues(document.getElementById("album_max_year")));
+    greatest.send(greatest.searchByYearRangesResponse, "?pf=&minYear=" + greatest.getSelectValues(document.getElementById("album_min_year")) + "&maxYear=" + greatest.getSelectValues(document.getElementById("album_max_year")) + greatest.bandIdValue());
 };
 
 greatest.searchByYearRangesResponse = function (o) {
@@ -194,7 +196,7 @@ greatest.searchByYearRangesResponse = function (o) {
 greatest.searchByTimeRanges = function () {
     var result = document.getElementById("time_rangesresult");
     result.innerHTML = "";
-    greatest.send(greatest.searchByTimeRangesResponse, "?pf=&mintime=" + greatest.getSelectValues(document.getElementById("track_min_time")) + "&maxtime=" + greatest.getSelectValues(document.getElementById("track_max_time")));
+    greatest.send(greatest.searchByTimeRangesResponse, "?pf=&mintime=" + greatest.getSelectValues(document.getElementById("track_min_time")) + "&maxtime=" + greatest.getSelectValues(document.getElementById("track_max_time")) + greatest.bandIdValue());
 };
 
 greatest.searchByTimeRangesResponse = function (o) {
@@ -219,6 +221,17 @@ greatest.trackvtrackresponse2 = function (o) {
     greatest.buildResponse(o, "head_to_headSelectionTableBody", "head_to_headresult2", "greatest.selectTrack", true);
 };
 
+greatest.searchByOpenerCloser = function () {
+    var result = document.getElementById("opener_closersresult");
+    result.innerHTML = "";
+    var val = greatest.getSelectValues(document.getElementById("opener_closer_track"));
+    greatest.send(greatest.searchByOpenerCloserResponse, "?pf=&tracknumber=" + val + greatest.bandIdValue());
+};
+
+greatest.searchByOpenerCloserResponse = function (o) {
+    greatest.buildResponse(o, "opener_closerSelectionTableBody", "opener_closersresult", "greatest.selectTrack", false);
+};
+
 greatest.search = function () {
     greatest.allTracks = false;
     var result = document.getElementById("result");
@@ -231,7 +244,7 @@ greatest.search = function () {
     }
     greatest.dataset = [];
     greatest.lastTrack = tn;
-    greatest.send(greatest.searchResponse, "?pf=&tracknumber="+tn);
+    greatest.send(greatest.searchResponse, "?pf=&tracknumber=" + tn + greatest.bandIdValue());
 };
 
 greatest.searchResponse = function (o) {
@@ -293,7 +306,7 @@ greatest.buildResponse = function (o, selectionTableBodyName, resultTableName, s
     if (greatest.allTracks) {
         greatest.lastTrack++;
         if (greatest.lastTrack < 12) {
-            greatest.send(greatest.searchResponse, "?pf=&tracknumber=" + greatest.lastTrack);
+            greatest.send(greatest.searchResponse, "?pf=&tracknumber=" + greatest.lastTrack + greatest.bandIdValue());
         }
     }
 };
@@ -460,4 +473,12 @@ greatest.getSelectValues = function(select) {
         }
     }
     return result;
+};
+
+greatest.bandIdValue = function () {
+    return "&artist=" + greatest.getCurrentBandId();
+};
+
+greatest.getCurrentBandId = function () {
+    return greatest.getSelectValues(document.getElementById("band_list"));
 };

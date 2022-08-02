@@ -23,6 +23,7 @@
                 <option value="3">Greatest Hits by Year Range</option>
                 <option value="4">Greatest Hits by Time Range</option>
                 <option value="5">Track vs. Track</option>
+                <option value="6">Greatest Hits Opener/Closer</option>
             </select>
         </div>
     </div>
@@ -98,6 +99,24 @@
             <div id="time_rangeselectionarea">
                 <table id="time_rangeselection">
                     <tbody id="time_rangeSelectionTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div id="opener_closer_div" name="list_div">
+        <h1><span name="band_name"></span> Greatest Hits by Opener/Closer</h1>
+        <div id="opener_closer_list_div">
+            <select name="opener_closerselect" id="opener_closer_track">
+                <option value="1">Opener</option>
+                <option value="99">Closer</option>
+            </select>
+            <input type="button" value="Search" onclick="greatest.searchByOpenerCloser();" />
+            <div id="opener_closersresultarea">
+                <div id="opener_closersresult"></div>
+            </div>
+            <div id="opener_closerselectionarea">
+                <table id="opener_closerselection">
+                    <tbody id="opener_closerSelectionTableBody"></tbody>
                 </table>
             </div>
         </div>
