@@ -5,6 +5,11 @@ greatest.allTracks = false;
 greatest.dataset = [];
 greatest.posOverride = "-1";
 greatest.bestTrackPos = 1;
+greatest.track_number_col = "track_number";
+greatest.length_col = "length";
+greatest.track_number_pos = -1;
+greatest.length_col_pos = -1;
+greatest.length_col_no_pos = -1;
 
 greatest.getBands = function () {
     greatest.loadTimeSelect(document.getElementById("track_min_time"));
@@ -99,17 +104,24 @@ greatest.getAlbumYears = function (ts) {
 greatest.getAlbumYearsResponse = function (o) {
     var minYear = document.getElementById("album_min_year");
     var maxYear = document.getElementById("album_max_year");
+    minYear.innerHTML = "";
+    maxYear.innerHTML = "";
     for (var i = 0; i < o.total; i++) {
         minYear.appendChild(greatest.createYearOption(o.albumyears[i].year));
         maxYear.appendChild(greatest.createYearOption(o.albumyears[i].year));
     }
+    maxYear.childNodes[maxYear.childNodes.length - 1].setAttribute("selected", "selected")
     greatest.getBandAlbums(document.getElementById("band_list"));
 };
 
 greatest.getBandAlbums = function (ts) {
+    greatest.getBandAlbumsGeneric(ts, greatest.getBandAlbumsResponse);
+};
+
+greatest.getBandAlbumsGeneric = function (ts, callback) {
     var id = ts.options[ts.selectedIndex].value;
     if (parseInt(id) > 0) {
-        greatest.send(greatest.getBandAlbumsResponse, "?pf=albums&minYear=0&maxYear=9999&artist=" + id);
+        greatest.send(callback, "?pf=albums&minYear=0&maxYear=9999&artist=" + id);
     }
 };
 
@@ -119,13 +131,11 @@ greatest.getBandAlbumsResponse = function (o) {
     for (var i = 0; i < o.total; i++) {
         band_1.appendChild(greatest.createOption(o.albums[i].id, o.albums[i].album_name));
     }
+    greatest.buildResponse(o, "album_rankerSelectionTableBody", "album_rankersresult", "greatest.selectTrack", false);
 };
 
 greatest.getBand2Albums = function (ts) {
-    var id = ts.options[ts.selectedIndex].value;
-    if (parseInt(id) > 0) {
-        greatest.send(greatest.getBand2AlbumsResponse, "?pf=albums&minYear=0&maxYear=9999&artist=" + id);
-    }
+    greatest.getBandAlbumsGeneric(ts, greatest.getBand2AlbumsResponse);
 };
 
 greatest.getBand2AlbumsResponse = function (o) {
@@ -154,16 +164,45 @@ greatest.showListType = function (ts) {
         list_divs[i].style.display = "none";
     }
     var s = ts.options[ts.selectedIndex].value;
+    var show_total_div = false;
+    document.getElementById("total_time_span").innerText = "";
+    var tbody = null;
+
+    var HEADER_ROW_OFFSET = 1;
+    var pos = -1;
     if (s == 1) {
         document.getElementById("hits_div").style.display = "block";
+        tbody = document.getElementById("selectionTableBody");
+        pos = greatest.length_col_pos;
+        show_total_div = true;
     } else if (s == 2) {
         document.getElementById("writers_div").style.display = "block";
+        tbody = document.getElementById("writerSelectionTableBody");
+        pos = greatest.length_col_no_pos;
+        show_total_div = true;
     } else if (s == 3) {
         document.getElementById("year_range_div").style.display = "block";
+        tbody = document.getElementById("year_rangeSelectionTableBody");
+        pos = greatest.length_col_no_pos;
+        show_total_div = true;
     } else if (s == 4) {
         document.getElementById("time_range_div").style.display = "block";
+        tbody = document.getElementById("time_rangeSelectionTableBody");
+        pos = greatest.length_col_no_pos;
+        show_total_div = true;
     } else if (s == 5) {
         document.getElementById("head_to_head_div").style.display = "block";
+    } else if (s == 6) {
+        document.getElementById("opener_closer_div").style.display = "block";
+        tbody = document.getElementById("opener_closerSelectionTableBody");
+        pos = greatest.length_col_no_pos;
+        show_total_div = true;
+    } else if (s == 7) {
+        document.getElementById("album_ranker_div").style.display = "block";
+    }
+    if (show_total_div) {
+        document.getElementById("total_div").style.display = "block";
+        greatest.calcTotalTime(tbody, HEADER_ROW_OFFSET, pos);
     }
 };
 
@@ -174,7 +213,7 @@ greatest.searchByWriters = function () {
     if (document.getElementById("writerstrict").checked) {
         strict = "-1,";
     }
-    greatest.send(greatest.searchByWritersResponse, "?pf=&writers=" + strict + greatest.getSelectValues(document.getElementById("writerselect")).join(","));
+    greatest.send(greatest.searchByWritersResponse, "?pf=&writers=" + strict + greatest.getSelectValues(document.getElementById("writerselect")).join(",") + greatest.bandIdValue());
 };
 
 greatest.searchByWritersResponse = function (o) {
@@ -184,7 +223,7 @@ greatest.searchByWritersResponse = function (o) {
 greatest.searchByYearRanges = function () {
     var result = document.getElementById("year_rangesresult");
     result.innerHTML = "";
-    greatest.send(greatest.searchByYearRangesResponse, "?pf=&minYear=" + greatest.getSelectValues(document.getElementById("album_min_year")) + "&maxYear=" + greatest.getSelectValues(document.getElementById("album_max_year")));
+    greatest.send(greatest.searchByYearRangesResponse, "?pf=&minYear=" + greatest.getSelectValues(document.getElementById("album_min_year")) + "&maxYear=" + greatest.getSelectValues(document.getElementById("album_max_year")) + greatest.bandIdValue());
 };
 
 greatest.searchByYearRangesResponse = function (o) {
@@ -194,7 +233,7 @@ greatest.searchByYearRangesResponse = function (o) {
 greatest.searchByTimeRanges = function () {
     var result = document.getElementById("time_rangesresult");
     result.innerHTML = "";
-    greatest.send(greatest.searchByTimeRangesResponse, "?pf=&mintime=" + greatest.getSelectValues(document.getElementById("track_min_time")) + "&maxtime=" + greatest.getSelectValues(document.getElementById("track_max_time")));
+    greatest.send(greatest.searchByTimeRangesResponse, "?pf=&mintime=" + greatest.getSelectValues(document.getElementById("track_min_time")) + "&maxtime=" + greatest.getSelectValues(document.getElementById("track_max_time")) + greatest.bandIdValue());
 };
 
 greatest.searchByTimeRangesResponse = function (o) {
@@ -219,6 +258,17 @@ greatest.trackvtrackresponse2 = function (o) {
     greatest.buildResponse(o, "head_to_headSelectionTableBody", "head_to_headresult2", "greatest.selectTrack", true);
 };
 
+greatest.searchByOpenerCloser = function () {
+    var result = document.getElementById("opener_closersresult");
+    result.innerHTML = "";
+    var val = greatest.getSelectValues(document.getElementById("opener_closer_track"));
+    greatest.send(greatest.searchByOpenerCloserResponse, "?pf=&tracknumber=" + val + greatest.bandIdValue());
+};
+
+greatest.searchByOpenerCloserResponse = function (o) {
+    greatest.buildResponse(o, "opener_closerSelectionTableBody", "opener_closersresult", "greatest.selectTrack", false);
+};
+
 greatest.search = function () {
     greatest.allTracks = false;
     var result = document.getElementById("result");
@@ -231,7 +281,7 @@ greatest.search = function () {
     }
     greatest.dataset = [];
     greatest.lastTrack = tn;
-    greatest.send(greatest.searchResponse, "?pf=&tracknumber="+tn);
+    greatest.send(greatest.searchResponse, "?pf=&tracknumber=" + tn + greatest.bandIdValue());
 };
 
 greatest.searchResponse = function (o) {
@@ -276,6 +326,9 @@ greatest.buildResponse = function (o, selectionTableBodyName, resultTableName, s
     table.appendChild(header);
     
     var tracks = o.tracks;
+    if (tracks == undefined) {
+        tracks = o.albums;
+    }
     for (var x = 0; x < tracks.length; x++) {
         var row = document.createElement("tr");
         var b = document.createElement("td");
@@ -283,7 +336,7 @@ greatest.buildResponse = function (o, selectionTableBodyName, resultTableName, s
         button.textContent= "Select";
         b.appendChild(button);
         row.appendChild(b);
-        button.setAttribute("onclick", selectTrackFunc + "(" + (greatest.dataset.length - 1).toString() + "," + x + "," + tracks[x]["track_number"] + ",'" + selectionTableBodyName + "'," + usePos + ");");
+        button.setAttribute("onclick", selectTrackFunc + "(" + (greatest.dataset.length - 1).toString() + "," + x + "," + tracks[x][greatest.track_number_col] + ",'" + selectionTableBodyName + "'," + usePos + ");");
         row = greatest.buildTrackRow(row, tracks[x], columns, greatest.posOverride);
         body.appendChild(row);
     }
@@ -293,18 +346,26 @@ greatest.buildResponse = function (o, selectionTableBodyName, resultTableName, s
     if (greatest.allTracks) {
         greatest.lastTrack++;
         if (greatest.lastTrack < 12) {
-            greatest.send(greatest.searchResponse, "?pf=&tracknumber=" + greatest.lastTrack);
+            greatest.send(greatest.searchResponse, "?pf=&tracknumber=" + greatest.lastTrack + greatest.bandIdValue());
         }
     }
 };
 
 greatest.selectTrack = function (datasetIndex, trackIndex, trackNumber, selectionTableBodyName, usePos) {
     var trackColNum = -1;
+    var lengthColNum = -1;
+    var NO_POS_BUTTON_OFFSET = 3;
+    var POS_BUTTON_OFFSET = 1;
+    var HEADER_ROW_OFFSET = 1;
     for (var i = 0; i < greatest.dataset[datasetIndex].columns.length; i++) {
-        if (greatest.dataset[datasetIndex].columns[i] == "track_number") {
+        if (greatest.dataset[datasetIndex].columns[i] == greatest.track_number_col) {
             trackColNum = i;
+        } else if (greatest.dataset[datasetIndex].columns[i] == greatest.length_col) {
+            lengthColNum = i;
         }
     }
+    greatest.length_col_no_pos = lengthColNum + NO_POS_BUTTON_OFFSET;
+    greatest.length_col_pos = lengthColNum + POS_BUTTON_OFFSET;
     var row = document.createElement("tr");
     var b = document.createElement("td");
     var button = document.createElement("button");
@@ -314,23 +375,25 @@ greatest.selectTrack = function (datasetIndex, trackIndex, trackNumber, selectio
     row.appendChild(b);
     var removeParam = trackNumber + "," + usePos + ",'" + selectionTableBodyName + "'," + String(trackColNum);
     if (!usePos) {
-        removeParam = "parseInt(this.parentElement.parentElement.childNodes[" + String(trackColNum + 3) + "].innerText)," + usePos + ",'" + selectionTableBodyName + "'," + String(trackColNum + 3);
+        removeParam = "parseInt(this.parentElement.parentElement.childNodes[" + String(trackColNum + NO_POS_BUTTON_OFFSET) + "].innerText)," + usePos + ",'" + selectionTableBodyName + "'," + String(trackColNum + NO_POS_BUTTON_OFFSET);
     }
     button.setAttribute("onclick", "greatest.removeTrack(" + removeParam + ");");
     var pos = String(tbody.childNodes.length);
     if (usePos) {
         pos = greatest.posOverride;
+        lengthColNum += POS_BUTTON_OFFSET;
     } else {
-        greatest.buildMoveButton(row, "Up","greatest.moveTrackUp(this," + String(trackColNum + 3) + ");");
-        greatest.buildMoveButton(row, "Down", "greatest.moveTrackDown(this," + String(trackColNum + 3)  + ");");
+        greatest.buildMoveButton(row, "Up", "greatest.moveTrackUp(this," + String(trackColNum + NO_POS_BUTTON_OFFSET) + ");");
+        greatest.buildMoveButton(row, "Down", "greatest.moveTrackDown(this," + String(trackColNum + NO_POS_BUTTON_OFFSET) + ");");
+        lengthColNum += NO_POS_BUTTON_OFFSET;
     }
     row = greatest.buildTrackRow(row, greatest.dataset[datasetIndex].tracks[trackIndex], greatest.dataset[datasetIndex].columns, pos);
-    
+
     var currentRows = tbody.childNodes.length;
     if (usePos) {
-        var numRows = (trackNumber + 1) - currentRows;
+        var numRows = (trackNumber + HEADER_ROW_OFFSET) - currentRows;
         if (numRows > 0) {
-            for (var x = currentRows; x < trackNumber + 1; x++) {
+            for (var x = currentRows; x < trackNumber + HEADER_ROW_OFFSET; x++) {
                 var r = document.createElement("tr");
                 tbody.appendChild(r);
             }
@@ -339,6 +402,22 @@ greatest.selectTrack = function (datasetIndex, trackIndex, trackNumber, selectio
     } else {
         tbody.appendChild(row);
     }
+
+    greatest.calcTotalTime(tbody, HEADER_ROW_OFFSET, lengthColNum);
+};
+
+greatest.calcTotalTime = function (tbody, HEADER_ROW_OFFSET, lengthColNum) {
+    if (lengthColNum < 0 || tbody == null) {
+        return;
+    }
+    total = 0;
+    for (var i = HEADER_ROW_OFFSET; i < tbody.childNodes.length; i++) {
+        if (tbody.childNodes[i].childNodes.length >= lengthColNum) {
+            total += greatest.convertLengthToSec(tbody.childNodes[i].childNodes[lengthColNum].innerText);
+        }
+    }
+
+    document.getElementById('total_time_span').innerText = greatest.fancyTimeFormat(total);
 };
 
 greatest.buildMoveButton = function (row,text,clickFunc) {
@@ -369,7 +448,7 @@ greatest.buildTrackRow = function (row, track, columns, posOverride) {
     }
     for (var y = 0; y < columns.length; y++) {
         var field = document.createElement("td");
-        if (columns[y] == "track_number") {
+        if (columns[y] == greatest.track_number_col) {
             if (posOverride == greatest.posOverride) {
                 field.innerHTML = track[columns[y]];
             } else {
@@ -460,4 +539,40 @@ greatest.getSelectValues = function(select) {
         }
     }
     return result;
+};
+
+greatest.bandIdValue = function () {
+    return "&artist=" + greatest.getCurrentBandId();
+};
+
+greatest.getCurrentBandId = function () {
+    return greatest.getSelectValues(document.getElementById("band_list"));
+};
+
+greatest.convertLengthToSec = function (time) {
+    var split = time.split(":").reverse();
+    var total = 0;
+    for (var i = split.length - 1; i >= 0; i--) {
+        total += parseInt(split[i]) * Math.pow(60, i);
+    }
+
+    return total;
+};
+
+greatest.fancyTimeFormat = function (duration) {
+    // Hours, minutes and seconds
+    var hrs = ~~(duration / 3600);
+    var mins = ~~((duration % 3600) / 60);
+    var secs = ~~duration % 60;
+
+    // Output like "1:01" or "4:03:59" or "123:03:59"
+    var ret = "";
+
+    if (hrs > 0) {
+        ret += "" + hrs + ":" + (mins < 10 ? "0" : "");
+    }
+
+    ret += "" + mins + ":" + (secs < 10 ? "0" : "");
+    ret += "" + secs;
+    return ret;
 };
