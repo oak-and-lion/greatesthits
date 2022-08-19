@@ -77,7 +77,7 @@ BEGIN
             select id, id from _bandwriter where idBand = ISNULL(@idArtist, idBand) AND id not in (select item from @writersList)
     END
 
-    DECLARE @results TABLE ([track title] VARCHAR(1024), [length] CHAR(8), album VARCHAR(1024), releaseYear INT, [track number] INT, [album type] VARCHAR(20), artist VARCHAR(1024), [writer(s)] VARCHAR(1024), writerids varchar(50))
+    DECLARE @results TABLE (idAlbum INT, [track title] VARCHAR(1024), [length] CHAR(8), album VARCHAR(1024), releaseYear INT, [track number] INT, [album type] VARCHAR(20), artist VARCHAR(1024), [writer(s)] VARCHAR(1024), writerids varchar(50))
 
     insert into @results
     SELECT c.trackname AS [track title]
@@ -153,5 +153,5 @@ BEGIN
         END
 
         select * from @results
-        ORDER BY releaseYear
+        ORDER BY releaseYear, idAlbum, track_number
 END

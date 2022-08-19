@@ -6,7 +6,7 @@ ALTER PROCEDURE dbo._disc_getBandAlbumYears
 (@idArtist INT)
 AS
 BEGIN
-	SELECT DISTINCT b.albumYear, b.id AS [idBand]
+	SELECT DISTINCT b.albumYear, @idArtist AS [idBand]
 		FROM _BandAlbum b
 			INNER JOIN _BandTrack c ON c.idAlbum = b.id
 		WHERE b.idBand = @idArtist
