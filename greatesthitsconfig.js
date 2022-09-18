@@ -1,5 +1,10 @@
-﻿// dev Config
+﻿// prod Config
 console.log("using Prod Config");
 
-// set the backend API
-greatest.apiUrl = "https://childsheartyoga.com/BandFunctions.aspx";
+// check for https protocol
+if (location.protocol !== 'https:') {
+    location.replace(`https:${location.href.substring(location.protocol.length)}`);
+} else {}
+    // set the backend API
+    greatest.apiUrl = "https://childsheartyoga.com/BandFunctions.aspx";
+}
