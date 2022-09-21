@@ -1,6 +1,5 @@
-﻿// prod Config
+// prod Config
 console.log("using Prod Config");
-
 // check for https protocol
 if (location.protocol !== 'https:') {
     location.replace(`https:${location.href.substring(location.protocol.length)}`);

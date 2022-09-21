@@ -15,10 +15,17 @@ BEGIN
 					, a.albumName
 					, a.albumYear
 					, a.idAlbumType
+					, COUNT(b.id) as tracks
+					, LTRIM(RTRIM(RIGHT(CONVERT(CHAR(8),DATEADD(second,SUM(b.seconds),0),108),8))) AS [length]
 		FROM _BandAlbum a
 			INNER JOIN _BandTrack b ON b.idAlbum = a.id
         WHERE a.idBand = @idArtist
             AND a.idAlbumType = ISNULL(@idAlbumtype, a.idAlbumType)
             AND a.albumYear >= @minyear
             AND a.albumYear <= @maxyear
+		GROUP BY a.id
+					, a.idBand
+					, a.albumName
+					, a.albumYear
+					, a.idAlbumType
 END

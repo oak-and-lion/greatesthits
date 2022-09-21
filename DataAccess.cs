@@ -77,6 +77,8 @@ namespace cyberBurnerWS
             result.Tables[0].Columns.Add("album_year");
             result.Tables[0].Columns.Add("id_album_type");
             result.Tables[0].Columns.Add("album_name");
+            result.Tables[0].Columns.Add("tracks");
+            result.Tables[0].Columns.Add("length");
 
             SqlCommand cmd = PrepCmd("dbo._disc_getBandAlbums");
 
@@ -89,7 +91,7 @@ namespace cyberBurnerWS
 
             while (reader.Read())
             {
-                result.Tables[0].Rows.Add(new object[] { reader["id"], reader["idBand"], reader["albumYear"], reader["idAlbumType"], reader["albumName"] });
+                result.Tables[0].Rows.Add(new object[] { reader["id"], reader["idBand"], reader["albumYear"], reader["idAlbumType"], reader["albumName"], reader["tracks"], reader["length"] });
             }
 
             CloseDown(cmd, reader);
