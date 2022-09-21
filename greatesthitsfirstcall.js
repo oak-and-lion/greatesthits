@@ -1,2 +1,4 @@
-﻿// first call
-greatest.getBands();
+function pageFullyLoaded(e) {
+	﻿// first call
+	greatest.getBands();
+}
