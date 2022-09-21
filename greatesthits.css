@@ -1,5 +1,9 @@
 ﻿.headerColumn {
-    text-align: left;
+    text-align: center;
+}
+
+.hiddenColumn {
+    display:none;
 }
 
 h1,body,html {

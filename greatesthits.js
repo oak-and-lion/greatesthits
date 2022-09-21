@@ -11,6 +11,10 @@ greatest.track_number_pos = -1;
 greatest.length_col_pos = -1;
 greatest.length_col_no_pos = -1;
 
+greatest.hiddenColumns = [
+    "id", "id_band", "id_album_type"
+];
+
 greatest.getBands = function () {
     greatest.loadTimeSelect(document.getElementById("track_min_time"));
     greatest.loadTimeSelect(document.getElementById("track_max_time"));
@@ -129,7 +133,7 @@ greatest.getBandAlbumsResponse = function (o) {
     var band_1 = document.getElementById("band_1_albums");
     band_1.options.length = 0;
     for (var i = 0; i < o.total; i++) {
-        band_1.appendChild(greatest.createOption(o.albums[i].id, o.albums[i].album_name));
+        band_1.appendChild(greatest.createOption(o.albums[i].id, o.albums[i].album_name + " (" + o.albums[i].album_year + ") [" + o.albums[i].tracks + "]"));
     }
     greatest.buildResponse(o, "album_rankerSelectionTableBody", "album_rankersresult", "greatest.selectTrack", false);
 };
@@ -142,7 +146,7 @@ greatest.getBand2AlbumsResponse = function (o) {
     var band_2 = document.getElementById("band_2_albums");
     band_2.options.length = 0;
     for (var i = 0; i < o.total; i++) {
-        band_2.appendChild(greatest.createOption(o.albums[i].id, o.albums[i].album_name));
+        band_2.appendChild(greatest.createOption(o.albums[i].id, o.albums[i].album_name + " (" + o.albums[i].album_year + ") [" + o.albums[i].tracks + "]"));
     }
 };
 
@@ -289,6 +293,8 @@ greatest.searchResponse = function (o) {
 };
 
 greatest.buildResponse = function (o, selectionTableBodyName, resultTableName, selectTrackFunc, usePos) {
+    document.getElementById(resultTableName).innerHTML = "";
+    document.getElementById(selectionTableBodyName).innerHTML = "";
     greatest.dataset.push(o);
     var selectionTableBody = document.getElementById(selectionTableBodyName);
     var needSelectionHeader = false;
@@ -310,13 +316,17 @@ greatest.buildResponse = function (o, selectionTableBodyName, resultTableName, s
         selectionHeaderRow.appendChild(document.createElement("th"));
     }
     for (var x = 0; x < columns.length; x++) {
+        var cn = "";
+        if (greatest.hiddenColumns.includes(columns[x])) {
+            cn = " hiddenColumn";
+        }
         var c = document.createElement("th");
         c.innerHTML = greatest.formatTitle(columns[x]);
-        c.className = "headerColumn";
+        c.className = "headerColumn" + cn;
         headerRow.appendChild(c);
         var d = document.createElement("th");
         d.innerHTML = greatest.formatTitle(columns[x]);
-        d.className = "headerColumn";
+        d.className = "headerColumn" + cn;
         selectionHeaderRow.appendChild(d);
     }
     if (needSelectionHeader) {
@@ -387,7 +397,11 @@ greatest.selectTrack = function (datasetIndex, trackIndex, trackNumber, selectio
         greatest.buildMoveButton(row, "Down", "greatest.moveTrackDown(this," + String(trackColNum + NO_POS_BUTTON_OFFSET) + ");");
         lengthColNum += NO_POS_BUTTON_OFFSET;
     }
-    row = greatest.buildTrackRow(row, greatest.dataset[datasetIndex].tracks[trackIndex], greatest.dataset[datasetIndex].columns, pos);
+    var ds = greatest.dataset[datasetIndex].tracks;
+    if (ds == undefined) {
+        ds = greatest.dataset[datasetIndex].albums;
+    }
+    row = greatest.buildTrackRow(row, ds[trackIndex], greatest.dataset[datasetIndex].columns, pos);
 
     var currentRows = tbody.childNodes.length;
     if (usePos) {
@@ -451,11 +465,17 @@ greatest.buildTrackRow = function (row, track, columns, posOverride) {
         if (columns[y] == greatest.track_number_col) {
             if (posOverride == greatest.posOverride) {
                 field.innerHTML = track[columns[y]];
+                if (greatest.hiddenColumns.includes(columns[y])) {
+                    field.className = "hiddenColumn";
+                }
             } else {
                 field.innerHTML = posOverride;
             }
         } else {
             field.innerHTML = track[columns[y]];
+            if (greatest.hiddenColumns.includes(columns[y])) {
+                field.className = "hiddenColumn";
+            }
         }
         row.appendChild(field);
     }
@@ -522,7 +542,7 @@ greatest.send = function (callback,params) {
         // end of state change: it can be after some time (async)
     };
 
-    xhr.open('GET', greatest.apiUrl + params, true);
+    xhr.open('GET', greatest.apiUrl + params + "&v=" + Math.random(), true);
     xhr.send();
 };
 

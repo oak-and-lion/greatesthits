@@ -1,4 +1,4 @@
-greatest.pageFullyLoaded = function(e) {
+greatest.pageFullyLoaded = function (e) {
 	// first call
 	greatest.getBands();
 }
