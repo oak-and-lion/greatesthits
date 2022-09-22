@@ -314,6 +314,7 @@ greatest.buildResponse = function (o, selectionTableBodyName, resultTableName, s
     if (!usePos) {
         selectionHeaderRow.appendChild(document.createElement("th"));
         selectionHeaderRow.appendChild(document.createElement("th"));
+        selectionHeaderRow.appendChild(document.createElement("th"));
     }
     for (var x = 0; x < columns.length; x++) {
         var cn = "";
@@ -346,7 +347,11 @@ greatest.buildResponse = function (o, selectionTableBodyName, resultTableName, s
         button.textContent= "Select";
         b.appendChild(button);
         row.appendChild(b);
-        button.setAttribute("onclick", selectTrackFunc + "(" + (greatest.dataset.length - 1).toString() + "," + x + "," + tracks[x][greatest.track_number_col] + ",'" + selectionTableBodyName + "'," + usePos + ");");
+        var tn = tracks[x][greatest.track_number_col];
+        if (tn == undefined) {
+            tn = 0;
+        }
+        button.setAttribute("onclick", selectTrackFunc + "(" + (greatest.dataset.length - 1).toString() + "," + x + "," + tn + ",'" + selectionTableBodyName + "'," + usePos + ");");
         row = greatest.buildTrackRow(row, tracks[x], columns, greatest.posOverride);
         body.appendChild(row);
     }
@@ -362,8 +367,8 @@ greatest.buildResponse = function (o, selectionTableBodyName, resultTableName, s
 };
 
 greatest.selectTrack = function (datasetIndex, trackIndex, trackNumber, selectionTableBodyName, usePos) {
-    var trackColNum = -1;
-    var lengthColNum = -1;
+    var trackColNum = 0;
+    var lengthColNum = 0;
     var NO_POS_BUTTON_OFFSET = 3;
     var POS_BUTTON_OFFSET = 1;
     var HEADER_ROW_OFFSET = 1;
@@ -400,6 +405,11 @@ greatest.selectTrack = function (datasetIndex, trackIndex, trackNumber, selectio
     var ds = greatest.dataset[datasetIndex].tracks;
     if (ds == undefined) {
         ds = greatest.dataset[datasetIndex].albums;
+    }
+    if (!usePos) {
+        var b1 = document.createElement("td");
+        b1.innerHTML = tbody.childNodes.length;
+        row.appendChild(b1);
     }
     row = greatest.buildTrackRow(row, ds[trackIndex], greatest.dataset[datasetIndex].columns, pos);
 
