@@ -135,6 +135,7 @@ greatest.getBandAlbumsResponse = function (o) {
     for (var i = 0; i < o.total; i++) {
         band_1.appendChild(greatest.createOption(o.albums[i].id, o.albums[i].album_name + " (" + o.albums[i].album_year + ") [" + o.albums[i].tracks + "]"));
     }
+    document.getElementById("album_rankerSelectionTableBody").innerHTML = "";
     greatest.buildResponse(o, "album_rankerSelectionTableBody", "album_rankersresult", "greatest.selectTrack", false);
 };
 
