@@ -1,6 +1,9 @@
-// prod Config
-console.log("using Dev Config");
-// set the backend API
-greatest.apiUrl = "http://localhost:51882/BandFunctions.aspx"; //"https://childsheartyoga.com/BandFunctions.aspx";
+// check for https protocol
+if (location.protocol !== 'https:') {
+    location.replace(`https:${location.href.substring(location.protocol.length)}`);
+} else {
+    // set the backend API
+    greatest.apiUrl = "https://childsheartyoga.com/BandFunctions.aspx";
+}
 
 greatestLoad.loadScript();
