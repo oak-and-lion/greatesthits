@@ -1,6 +1,3 @@
-greatest.pageFullyLoaded = function (e) {
-	// first call
-	greatest.getBands();
-}
-
-window.addEventListener("load", greatest.pageFullyLoaded, false);
+// first call
+greatest.getBands();
+greatestLoad.loadScript();

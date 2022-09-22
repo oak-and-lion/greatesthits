@@ -294,7 +294,6 @@ greatest.searchResponse = function (o) {
 
 greatest.buildResponse = function (o, selectionTableBodyName, resultTableName, selectTrackFunc, usePos) {
     document.getElementById(resultTableName).innerHTML = "";
-    document.getElementById(selectionTableBodyName).innerHTML = "";
     greatest.dataset.push(o);
     var selectionTableBody = document.getElementById(selectionTableBodyName);
     var needSelectionHeader = false;
@@ -596,3 +595,5 @@ greatest.fancyTimeFormat = function (duration) {
     ret += "" + secs;
     return ret;
 };
+
+greatestLoad.loadScript();
