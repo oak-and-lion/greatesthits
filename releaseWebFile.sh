@@ -1,3 +1,17 @@
+function get_branch() {
+	git branch --no-color | grep -E '^\*' | awk '{print $2}' \
+        || echo "default_value"
+}
+branch=`get_branch`;
+
+if [ ! $branch = 'main' ] 
+then
+	echo "you are on branch: "$branch;
+	echo "you can only release from the main branch";
+	exit 1;
+fi
+
+
 s3bucket=$(<s3.txt)
 distid=$(<dist.txt)
 aws s3 cp min/greatesthits.html ${s3bucket}greatesthits.html --acl public-read
