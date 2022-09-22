@@ -6,4 +6,6 @@ if (location.protocol !== 'https:') {
     greatest.apiUrl = "https://childsheartyoga.com/BandFunctions.aspx";
 }
 
+console.log("using Prod config");
+
 greatestLoad.loadScript();
