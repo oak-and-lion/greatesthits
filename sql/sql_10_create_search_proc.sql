@@ -3,7 +3,7 @@ IF NOT EXISTS (SELECT * FROM sys.objects WHERE type = 'P' AND OBJECT_ID = OBJECT
    exec('CREATE PROCEDURE [dbo].[_disc_searchTracks] AS BEGIN SET NOCOUNT ON; END')
 GO
 
-ALTER PROCEDURE [dbo].[_disc_searchTracks] (@idArtist INT, @tracknumber INT, @idAlbumtype INT, @idAlbum INT, @maxtime INT, @mintime INT, @writers VARCHAR(1024) = NULL, @minyear INT = 0, @maxyear INT = 9999)
+ALTER PROCEDURE [dbo].[_disc_searchTracks] (@idArtist INT, @tracknumber INT, @idAlbumtype INT, @idAlbum INT, @maxtime INT, @mintime INT, @writers VARCHAR(1024) = NULL, @minyear INT = 0, @maxyear INT = 9999, @startsWith VARCHAR(255) = '', @isTitle BIT = 0)
 AS
 BEGIN
     if (ISNULL(@idArtist, 0) = 0)
@@ -40,6 +40,18 @@ BEGIN
     BEGIN
         set @writers = ''
     END
+
+	declare @startsWithLen INT = 1
+
+	IF (LTRIM(RTRIM(ISNULL(@startsWith, ''))) = '')
+	BEGIN
+		SET @startsWith = NULL
+	END
+
+	IF @startsWith IS NOT NULL
+	BEGIN
+		SET @startsWithLen = LEN(@startsWith)
+	END
 
     declare @writersList TABLE (id int, item VARCHAR(1024))
     declare @writersIgnoreList TABLE (id int, item VARCHAR(1024))
@@ -80,7 +92,8 @@ BEGIN
     DECLARE @results TABLE (idAlbum INT, [track title] VARCHAR(1024), [length] CHAR(8), album VARCHAR(1024), releaseYear INT, [track number] INT, [album type] VARCHAR(20), artist VARCHAR(1024), [writer(s)] VARCHAR(1024), writerids varchar(50))
 
     insert into @results
-    SELECT c.trackname AS [track title]
+    SELECT b.id
+		, c.trackname AS [track title]
         , RIGHT(CONVERT(CHAR(8),DATEADD(second,c.seconds,0),108),5) AS [length]
         , b.albumname AS album
         , b.albumYear AS [releaseYear]
@@ -128,10 +141,11 @@ BEGIN
             AND c.seconds BETWEEN ISNULL(@mintime, c.seconds) AND ISNULL(@maxtime, c.seconds)
             AND (g.idWriter IN (SELECT item from @writersList))
             AND (b.albumYear >= @minyear AND b.albumYear <= @maxyear)
-        GROUP BY c.trackname, c.seconds, b.albumname, b.albumYear, c.tracknumber, d.albumtype, a.bandname, c.id
-        ORDER BY b.albumYear, c.tracknumber
+			AND (SUBSTRING(c.trackname,1,@startsWithLen)) = ISNULL(@startsWith, SUBSTRING(c.trackname,1,@startsWithLen))
+        GROUP BY c.trackname, c.seconds, b.albumname, b.albumYear, c.tracknumber, d.albumtype, a.bandname, c.id, b.id
+        ORDER BY b.albumYear, b.id, c.tracknumber
 
-        if @strictWriterSearch = 1
+        IF @strictWriterSearch = 1
         BEGIN
             declare @allowed VARCHAR(50)
             select @allowed = ltrim(
@@ -152,6 +166,11 @@ BEGIN
             END
         END
 
-        select * from @results
-        ORDER BY releaseYear, idAlbum, track_number
+	IF @isTitle = 1
+	BEGIN
+		delete from @results where album <> [track title]
+	END
+
+    select * from @results
+	ORDER BY releaseYear, idAlbum, [track number]
 END
