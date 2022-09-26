@@ -137,6 +137,18 @@ greatest.getBandAlbumsResponse = function (o) {
     }
     document.getElementById("album_rankerSelectionTableBody").innerHTML = "";
     greatest.buildResponse(o, "album_rankerSelectionTableBody", "album_rankersresult", "greatest.selectTrack", false);
+    greatest.getTitleTracks(document.getElementById("band_list"));
+};
+
+greatest.getTitleTracks = function (ts) {
+    var id = ts.options[ts.selectedIndex].value;
+    if (parseInt(id) > 0) {
+        greatest.send(greatest.getTitleTracksResponse, "?pf=&isTitle=1&artist=" + id);
+    }
+};
+
+greatest.getTitleTracksResponse = function (o) {
+    greatest.buildResponse(o, "title_tracks_selectionTableBody", "title_tracks_result", "greatest.selectTrack", false);
 };
 
 greatest.getBand2Albums = function (ts) {
@@ -204,6 +216,12 @@ greatest.showListType = function (ts) {
         show_total_div = true;
     } else if (s == 7) {
         document.getElementById("album_ranker_div").style.display = "block";
+    }
+    else if (s == 8) {
+        document.getElementById("title_tracks_div").style.display = "block";
+        tbody = document.getElementById("title_tracks_selectionTableBody");
+        pos = greatest.length_col_no_pos;
+        show_total_div = true;
     }
     if (show_total_div) {
         document.getElementById("total_div").style.display = "block";
@@ -284,7 +302,7 @@ greatest.search = function () {
         greatest.allTracks = true;
         tn = 1;
     }
-    greatest.dataset = [];
+    //greatest.dataset = [];
     greatest.lastTrack = tn;
     greatest.send(greatest.searchResponse, "?pf=&tracknumber=" + tn + greatest.bandIdValue());
 };
@@ -427,6 +445,7 @@ greatest.selectTrack = function (datasetIndex, trackIndex, trackNumber, selectio
         tbody.appendChild(row);
     }
 
+    if (lengthColNum > 2) lengthColNum++;
     greatest.calcTotalTime(tbody, HEADER_ROW_OFFSET, lengthColNum);
 };
 
