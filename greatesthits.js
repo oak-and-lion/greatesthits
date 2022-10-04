@@ -216,10 +216,14 @@ greatest.showListType = function (ts) {
         show_total_div = true;
     } else if (s == 7) {
         document.getElementById("album_ranker_div").style.display = "block";
-    }
-    else if (s == 8) {
+    } else if (s == 8) {
         document.getElementById("title_tracks_div").style.display = "block";
         tbody = document.getElementById("title_tracks_selectionTableBody");
+        pos = greatest.length_col_no_pos;
+        show_total_div = true;
+    } else if (s == 9) {
+        document.getElementById("by_letter_div").style.display = "block";
+        tbody = document.getElementById("by_letter_selectionTableBody");
         pos = greatest.length_col_no_pos;
         show_total_div = true;
     }
@@ -227,6 +231,16 @@ greatest.showListType = function (ts) {
         document.getElementById("total_div").style.display = "block";
         greatest.calcTotalTime(tbody, HEADER_ROW_OFFSET, pos);
     }
+};
+
+greatest.searchByLetter = function () {
+    var result = document.getElementById("by_lettersresult");
+    result.innerHTML = "";
+    greatest.send(greatest.searchByLetterResponse, "?pf=&startsWith=" + greatest.getSelectValues(document.getElementById("by_letter_track")).join(",") + greatest.bandIdValue());
+};
+
+greatest.searchByLetterResponse = function (o) {
+    greatest.buildResponse(o, "by_letterSelectionTableBody", "by_lettersresult", "greatest.selectTrack", false);
 };
 
 greatest.searchByWriters = function () {
@@ -332,7 +346,9 @@ greatest.buildResponse = function (o, selectionTableBodyName, resultTableName, s
     if (!usePos) {
         selectionHeaderRow.appendChild(document.createElement("th"));
         selectionHeaderRow.appendChild(document.createElement("th"));
-        selectionHeaderRow.appendChild(document.createElement("th"));
+        var b = document.createElement("th");
+        b.className = "hiddenColumn";
+        selectionHeaderRow.appendChild(b);
     }
     for (var x = 0; x < columns.length; x++) {
         var cn = "";
@@ -387,7 +403,7 @@ greatest.buildResponse = function (o, selectionTableBodyName, resultTableName, s
 greatest.selectTrack = function (datasetIndex, trackIndex, trackNumber, selectionTableBodyName, usePos) {
     var trackColNum = 0;
     var lengthColNum = 0;
-    var NO_POS_BUTTON_OFFSET = 3;
+    var NO_POS_BUTTON_OFFSET = 4;
     var POS_BUTTON_OFFSET = 1;
     var HEADER_ROW_OFFSET = 1;
     for (var i = 0; i < greatest.dataset[datasetIndex].columns.length; i++) {
@@ -427,6 +443,7 @@ greatest.selectTrack = function (datasetIndex, trackIndex, trackNumber, selectio
     if (!usePos) {
         var b1 = document.createElement("td");
         b1.innerHTML = tbody.childNodes.length;
+        b1.className = "hiddenColumn";
         row.appendChild(b1);
     }
     row = greatest.buildTrackRow(row, ds[trackIndex], greatest.dataset[datasetIndex].columns, pos);
@@ -445,7 +462,6 @@ greatest.selectTrack = function (datasetIndex, trackIndex, trackNumber, selectio
         tbody.appendChild(row);
     }
 
-    if (lengthColNum > 2) lengthColNum++;
     greatest.calcTotalTime(tbody, HEADER_ROW_OFFSET, lengthColNum);
 };
 
