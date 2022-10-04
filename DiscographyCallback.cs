@@ -17,12 +17,14 @@ namespace cyberBurnerWS
 
         public void DoPostBack()
         {
-            object[] parameters = new object[9];
+            object[] parameters = new object[11];
             for (int x = 0; x < parameters.Length; x++)
                 parameters[x] = 0;
 
             parameters[6] = "";
             parameters[8] = 9999;
+            parameters[9] = "";
+            parameters[10] = false;
 
             string func = "SearchForTracks";
 
@@ -63,6 +65,27 @@ namespace cyberBurnerWS
                 else if (arg.Arg.Equals("maxYear"))
                 {
                     parameters[8] = arg.Value;
+                }
+                else if (arg.Arg.Equals("startsWith"))
+                {
+                    parameters[9] = arg.Value;
+                }
+                else if (arg.Arg.Equals("isTitle"))
+                {
+                    bool b = false;
+                    string s = arg.Value;
+                    if (arg.Value == null)
+                    {
+                        s = "false";
+                    }
+
+                    s = s.ToLower().Trim();
+
+                    if (s.Equals("1") || s.Equals("true") || s.Equals("y"))
+                    {
+                        b = true;
+                    }
+                    parameters[10] = b;
                 }
                 else if (arg.Arg.Equals("func"))
                 {

@@ -44,6 +44,8 @@
                 <option value="2">Greatest Hits by Writer(s)</option>
                 <option value="3">Greatest Hits by Year Range</option>
                 <option value="4">Greatest Hits by Time Range</option>
+                <option value="8">Greatest Hits by Title Tracks</option>
+                <option value="9">Greatest Hits by Letter</option>
                 <option value="5">Track vs. Track</option>
                 <option value="6">Greatest Hits Opener/Closer</option>
                 <option value="7">Album Ranker</option>
@@ -66,6 +68,19 @@
             <div id="selection">
                 <table id="selectionTable">
                     <tbody id="selectionTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div id="title_tracks_div" name="list_div">
+        <h1><span name="band_name"></span> Greatest Hits by Title Tracks</h1>
+        <div id="title_tracks_result_area">
+            <div id="title_tracks_result"></div>
+        </div>
+        <div id="title_tracks_selection_area">
+            <div id="title_tracks_selection">
+                <table id="title_tracks_selectionTable">
+                    <tbody id="title_tracks_selectionTableBody"></tbody>
                 </table>
             </div>
         </div>
@@ -140,6 +155,57 @@
             <div id="opener_closerselectionarea">
                 <table id="opener_closerselection">
                     <tbody id="opener_closerSelectionTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div id="by_letter_div" name="list_div">
+        <h1><span name="band_name"></span> Greatest Hits by Letter</h1>
+        <div id="by_letter_list_div">
+            <select name="by_letterselect" id="by_letter_track">
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="C">C</option>
+                <option value="D">D</option>
+                <option value="E">E</option>
+                <option value="F">F</option>
+                <option value="G">G</option>
+                <option value="H">H</option>
+                <option value="I">I</option>
+                <option value="J">J</option>
+                <option value="K">K</option>
+                <option value="L">L</option>
+                <option value="M">M</option>
+                <option value="N">N</option>
+                <option value="O">O</option>
+                <option value="P">P</option>
+                <option value="Q">Q</option>
+                <option value="R">R</option>
+                <option value="S">S</option>
+                <option value="T">T</option>
+                <option value="U">U</option>
+                <option value="V">V</option>
+                <option value="W">W</option>
+                <option value="X">X</option>
+                <option value="Y">Y</option>
+                <option value="Z">Z</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+            </select>
+            <input type="button" value="Search" onclick="greatest.searchByLetter();" />
+            <div id="by_lettersresultarea">
+                <div id="by_lettersresult"></div>
+            </div>
+            <div id="by_letterselectionarea">
+                <table id="by_letterselection">
+                    <tbody id="by_letterSelectionTableBody"></tbody>
                 </table>
             </div>
         </div>

@@ -123,6 +123,8 @@ namespace cyberBurnerWS
             cmd.Parameters.Add(new SqlParameter("@writers", parameters[6].ToString()));
             cmd.Parameters.Add(new SqlParameter("@minyear", parameters[7].ToString()));
             cmd.Parameters.Add(new SqlParameter("@maxyear", parameters[8].ToString()));
+            cmd.Parameters.Add(new SqlParameter("@startsWith", parameters[9].ToString()));
+            cmd.Parameters.Add(new SqlParameter("@isTitle", parameters[10]));
 
             SqlDataReader reader = cmd.ExecuteReader();
 

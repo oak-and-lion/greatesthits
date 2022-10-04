@@ -137,6 +137,18 @@ greatest.getBandAlbumsResponse = function (o) {
     }
     document.getElementById("album_rankerSelectionTableBody").innerHTML = "";
     greatest.buildResponse(o, "album_rankerSelectionTableBody", "album_rankersresult", "greatest.selectTrack", false);
+    greatest.getTitleTracks(document.getElementById("band_list"));
+};
+
+greatest.getTitleTracks = function (ts) {
+    var id = ts.options[ts.selectedIndex].value;
+    if (parseInt(id) > 0) {
+        greatest.send(greatest.getTitleTracksResponse, "?pf=&isTitle=1&artist=" + id);
+    }
+};
+
+greatest.getTitleTracksResponse = function (o) {
+    greatest.buildResponse(o, "title_tracks_selectionTableBody", "title_tracks_result", "greatest.selectTrack", false);
 };
 
 greatest.getBand2Albums = function (ts) {
@@ -204,11 +216,31 @@ greatest.showListType = function (ts) {
         show_total_div = true;
     } else if (s == 7) {
         document.getElementById("album_ranker_div").style.display = "block";
+    } else if (s == 8) {
+        document.getElementById("title_tracks_div").style.display = "block";
+        tbody = document.getElementById("title_tracks_selectionTableBody");
+        pos = greatest.length_col_no_pos;
+        show_total_div = true;
+    } else if (s == 9) {
+        document.getElementById("by_letter_div").style.display = "block";
+        tbody = document.getElementById("by_letter_selectionTableBody");
+        pos = greatest.length_col_no_pos;
+        show_total_div = true;
     }
     if (show_total_div) {
         document.getElementById("total_div").style.display = "block";
         greatest.calcTotalTime(tbody, HEADER_ROW_OFFSET, pos);
     }
+};
+
+greatest.searchByLetter = function () {
+    var result = document.getElementById("by_lettersresult");
+    result.innerHTML = "";
+    greatest.send(greatest.searchByLetterResponse, "?pf=&startsWith=" + greatest.getSelectValues(document.getElementById("by_letter_track")).join(",") + greatest.bandIdValue());
+};
+
+greatest.searchByLetterResponse = function (o) {
+    greatest.buildResponse(o, "by_letterSelectionTableBody", "by_lettersresult", "greatest.selectTrack", false);
 };
 
 greatest.searchByWriters = function () {
@@ -284,7 +316,7 @@ greatest.search = function () {
         greatest.allTracks = true;
         tn = 1;
     }
-    greatest.dataset = [];
+    //greatest.dataset = [];
     greatest.lastTrack = tn;
     greatest.send(greatest.searchResponse, "?pf=&tracknumber=" + tn + greatest.bandIdValue());
 };
@@ -314,7 +346,9 @@ greatest.buildResponse = function (o, selectionTableBodyName, resultTableName, s
     if (!usePos) {
         selectionHeaderRow.appendChild(document.createElement("th"));
         selectionHeaderRow.appendChild(document.createElement("th"));
-        selectionHeaderRow.appendChild(document.createElement("th"));
+        var b = document.createElement("th");
+        b.className = "hiddenColumn";
+        selectionHeaderRow.appendChild(b);
     }
     for (var x = 0; x < columns.length; x++) {
         var cn = "";
@@ -369,7 +403,7 @@ greatest.buildResponse = function (o, selectionTableBodyName, resultTableName, s
 greatest.selectTrack = function (datasetIndex, trackIndex, trackNumber, selectionTableBodyName, usePos) {
     var trackColNum = 0;
     var lengthColNum = 0;
-    var NO_POS_BUTTON_OFFSET = 3;
+    var NO_POS_BUTTON_OFFSET = 4;
     var POS_BUTTON_OFFSET = 1;
     var HEADER_ROW_OFFSET = 1;
     for (var i = 0; i < greatest.dataset[datasetIndex].columns.length; i++) {
@@ -409,6 +443,7 @@ greatest.selectTrack = function (datasetIndex, trackIndex, trackNumber, selectio
     if (!usePos) {
         var b1 = document.createElement("td");
         b1.innerHTML = tbody.childNodes.length;
+        b1.className = "hiddenColumn";
         row.appendChild(b1);
     }
     row = greatest.buildTrackRow(row, ds[trackIndex], greatest.dataset[datasetIndex].columns, pos);
