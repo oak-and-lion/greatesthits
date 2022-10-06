@@ -10,9 +10,12 @@ greatest.length_col = "length";
 greatest.track_number_pos = -1;
 greatest.length_col_pos = -1;
 greatest.length_col_no_pos = -1;
+greatest.currentSelectionTable = null;
+greatest.exportCSVFileName = "greatest_hits.csv";
+greatest.exportJSONFileName = "greatest_hits.json";
 
 greatest.hiddenColumns = [
-    "id", "id_band", "id_album_type"
+    "id", "id_band", "id_album_type", "Id", "Id_Band"
 ];
 
 greatest.getBands = function () {
@@ -136,7 +139,7 @@ greatest.getBandAlbumsResponse = function (o) {
         band_1.appendChild(greatest.createOption(o.albums[i].id, o.albums[i].album_name + " (" + o.albums[i].album_year + ") [" + o.albums[i].tracks + "]"));
     }
     document.getElementById("album_rankerSelectionTableBody").innerHTML = "";
-    greatest.buildResponse(o, "album_rankerSelectionTableBody", "album_rankersresult", "greatest.selectTrack", false);
+    greatest.buildResponse(o, "album_rankerSelectionTableBody", "album_rankersresult", "greatest.selectTrack", false,true);
     greatest.getTitleTracks(document.getElementById("band_list"));
 };
 
@@ -187,6 +190,8 @@ greatest.showListType = function (ts) {
 
     var HEADER_ROW_OFFSET = 1;
     var pos = -1;
+    greatest.currentSelectionTable = null;
+
     if (s == 1) {
         document.getElementById("hits_div").style.display = "block";
         tbody = document.getElementById("selectionTableBody");
@@ -209,6 +214,7 @@ greatest.showListType = function (ts) {
         show_total_div = true;
     } else if (s == 5) {
         document.getElementById("head_to_head_div").style.display = "block";
+        tbody = document.getElementById("head_to_headSelectionTableBody");
     } else if (s == 6) {
         document.getElementById("opener_closer_div").style.display = "block";
         tbody = document.getElementById("opener_closerSelectionTableBody");
@@ -216,6 +222,7 @@ greatest.showListType = function (ts) {
         show_total_div = true;
     } else if (s == 7) {
         document.getElementById("album_ranker_div").style.display = "block";
+        tbody = document.getElementById("album_rankerSelectionTableBody");
     } else if (s == 8) {
         document.getElementById("title_tracks_div").style.display = "block";
         tbody = document.getElementById("title_tracks_selectionTableBody");
@@ -223,10 +230,11 @@ greatest.showListType = function (ts) {
         show_total_div = true;
     } else if (s == 9) {
         document.getElementById("by_letter_div").style.display = "block";
-        tbody = document.getElementById("by_letter_selectionTableBody");
+        tbody = document.getElementById("by_letterSelectionTableBody");
         pos = greatest.length_col_no_pos;
         show_total_div = true;
     }
+    greatest.currentSelectionTable = tbody;
     if (show_total_div) {
         document.getElementById("total_div").style.display = "block";
         greatest.calcTotalTime(tbody, HEADER_ROW_OFFSET, pos);
@@ -316,7 +324,6 @@ greatest.search = function () {
         greatest.allTracks = true;
         tn = 1;
     }
-    //greatest.dataset = [];
     greatest.lastTrack = tn;
     greatest.send(greatest.searchResponse, "?pf=&tracknumber=" + tn + greatest.bandIdValue());
 };
@@ -325,7 +332,10 @@ greatest.searchResponse = function (o) {
     greatest.buildResponse(o, "selectionTableBody", "result", "greatest.selectTrack", true);
 };
 
-greatest.buildResponse = function (o, selectionTableBodyName, resultTableName, selectTrackFunc, usePos) {
+greatest.buildResponse = function (o, selectionTableBodyName, resultTableName, selectTrackFunc, usePos, isAlbumList) {
+    if (isAlbumList == null || isAlbumList == undefined) {
+        isAlbumList = false;
+    }
     document.getElementById(resultTableName).innerHTML = "";
     greatest.dataset.push(o);
     var selectionTableBody = document.getElementById(selectionTableBodyName);
@@ -352,12 +362,15 @@ greatest.buildResponse = function (o, selectionTableBodyName, resultTableName, s
     }
     for (var x = 0; x < columns.length; x++) {
         var cn = "";
-        if (greatest.hiddenColumns.includes(columns[x])) {
+        if (greatest.hiddenColumns.indexOf(columns[x]) > -1) {
             cn = " hiddenColumn";
         }
         var c = document.createElement("th");
         c.innerHTML = greatest.formatTitle(columns[x]);
         c.className = "headerColumn" + cn;
+        if (name != "") {
+            c.setAttribute("name", name);
+        }
         headerRow.appendChild(c);
         var d = document.createElement("th");
         d.innerHTML = greatest.formatTitle(columns[x]);
@@ -385,7 +398,7 @@ greatest.buildResponse = function (o, selectionTableBodyName, resultTableName, s
         if (tn == undefined) {
             tn = 0;
         }
-        button.setAttribute("onclick", selectTrackFunc + "(" + (greatest.dataset.length - 1).toString() + "," + x + "," + tn + ",'" + selectionTableBodyName + "'," + usePos + ");");
+        button.setAttribute("onclick", selectTrackFunc + "(" + (greatest.dataset.length - 1).toString() + "," + x + "," + tn + ",'" + selectionTableBodyName + "'," + usePos + "," + isAlbumList + ");");
         row = greatest.buildTrackRow(row, tracks[x], columns, greatest.posOverride);
         body.appendChild(row);
     }
@@ -400,7 +413,7 @@ greatest.buildResponse = function (o, selectionTableBodyName, resultTableName, s
     }
 };
 
-greatest.selectTrack = function (datasetIndex, trackIndex, trackNumber, selectionTableBodyName, usePos) {
+greatest.selectTrack = function (datasetIndex, trackIndex, trackNumber, selectionTableBodyName, usePos, isAlbumList) {
     var trackColNum = 0;
     var lengthColNum = 0;
     var NO_POS_BUTTON_OFFSET = 4;
@@ -425,6 +438,11 @@ greatest.selectTrack = function (datasetIndex, trackIndex, trackNumber, selectio
     var removeParam = trackNumber + "," + usePos + ",'" + selectionTableBodyName + "'," + String(trackColNum);
     if (!usePos) {
         removeParam = "parseInt(this.parentElement.parentElement.childNodes[" + String(trackColNum + NO_POS_BUTTON_OFFSET) + "].innerText)," + usePos + ",'" + selectionTableBodyName + "'," + String(trackColNum + NO_POS_BUTTON_OFFSET);
+    } else {
+        NO_POS_BUTTON_OFFSET--;
+    }
+    if (isAlbumList) {
+        NO_POS_BUTTON_OFFSET--;
     }
     button.setAttribute("onclick", "greatest.removeTrack(" + removeParam + ");");
     var pos = String(tbody.childNodes.length);
@@ -562,6 +580,84 @@ greatest.switchRows = function (track, colNum, oldPos, newPos, limit) {
     }
 };
 
+greatest.export = function (export_type) {
+    var v = greatest.getSelectValues(export_type);
+    if (v == "0") {
+        greatest.exportCSV();
+    } else if (v == "1") {
+        greatest.exportJSON();
+    }
+};
+
+greatest.exportCSV = function () {
+    if (greatest.currentSelectionTable != null) {
+        var out = "";
+        var rows = greatest.currentSelectionTable.getElementsByTagName("tr");
+        var exportCols = [];
+        for (var i = 0; i < rows.length; i++) {
+            var cells = rows[i].childNodes;
+            if (i == 0) {
+                exportCols = greatest.findExportCols(cells);
+            }
+
+            var line = "";
+            if (i == 0) {
+                line = "rank,";
+            } else {
+                line = i + ",";
+            }
+            for (var x = 0; x < exportCols.length; x++) {
+                if (x > 0) {
+                    line += ",";
+                }
+                line += cells[exportCols[x]].innerHTML;
+            }
+            out += line + "\n";
+        }
+        greatest.download(greatest.exportCSVFileName, out);
+    }
+};
+
+greatest.exportJSON = function() {
+    if (greatest.currentSelectionTable != null) {
+        var out = '{"list":[';
+        var rows = greatest.currentSelectionTable.getElementsByTagName("tr");
+        var exportCols = [];
+        for (var i = 0; i < rows.length; i++) {
+            var cells = rows[i].childNodes;
+            if (i == 0) {
+                exportCols = greatest.findExportCols(cells);
+            } else {
+                var line = "";
+                if (i > 1) {
+                    line = ",";
+                }
+                line += '{"rank":' + i + ",";
+                for (var x = 0; x < exportCols.length; x++) {
+                    if (x > 0) {
+                        line += ",";
+                    }
+                    line += '"' + rows[0].childNodes[exportCols[x]].innerHTML + '":"' + cells[exportCols[x]].innerHTML + '"';
+                }
+                line += "}";
+                out += line;
+            }
+        }
+        out += "]}";
+        greatest.download(greatest.exportJSONFileName, out);
+    }
+};
+
+greatest.findExportCols = function (cells) {
+    var exportCols = [];
+    for (var x = 0; x < cells.length; x++) {
+        if (cells[x].className != "" && cells[x].className.indexOf("hiddenColumn") < 0) {
+            exportCols.push(x);
+        }
+    }
+    return exportCols;
+};
+
 greatest.formatTitle = function (text) {
     var words = text.split("_");
     for (var x = 0; x < words.length; x++) {
@@ -640,6 +736,19 @@ greatest.fancyTimeFormat = function (duration) {
     ret += "" + mins + ":" + (secs < 10 ? "0" : "");
     ret += "" + secs;
     return ret;
+};
+
+greatest.download = function (filename, text) {
+    var element = document.createElement('a');
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+    element.setAttribute('download', filename);
+
+    element.style.display = 'none';
+    document.body.appendChild(element);
+
+    element.click();
+
+    document.body.removeChild(element);
 };
 
 greatestLoad.loadScript();

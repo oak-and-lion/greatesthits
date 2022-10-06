@@ -21,7 +21,11 @@
             var s = document.createElement("script");
             s.setAttribute("type", "text/javascript");
             s.setAttribute("defer", "");
-            s.setAttribute("src", greatestLoad.list[greatestLoad.currentScriptIndex] + "?v=" + Math.random());
+            var cacheBuster = "?v=" + Math.random();
+            if (location.hostname == "localhost") {
+                cacheBuster = "";
+            }
+            s.setAttribute("src", greatestLoad.list[greatestLoad.currentScriptIndex] + cacheBuster);
             body.appendChild(s);
         };
         function loadJS(e) {
@@ -50,6 +54,14 @@
                 <option value="6">Greatest Hits Opener/Closer</option>
                 <option value="7">Album Ranker</option>
             </select>
+        </div>
+        <div id="export_div" name="header_chooser">
+            <span id="export_chooser_label">Export As:</span>
+            <select id="export_list">
+                <option value="0">CSV</option>
+                <option value="1">JSON</option>
+            </select>
+            <button value="Export" onclick="greatest.export(document.getElementById('export_list'));">Export</button>
         </div>
     </div>
     <div id="hits_div" name="list_div">
